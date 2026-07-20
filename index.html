@@ -1,0 +1,758 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Finanzas Enzo — Dashboard</title>
+<style>
+  :root {
+    color-scheme: light;
+    --page:        #f9f9f7;
+    --surface:     #fcfcfb;
+    --surface-2:   #f2f1ec;
+    --ink:         #0b0b0b;
+    --ink-2:       #52514e;
+    --muted:       #898781;
+    --grid:        #e1e0d9;
+    --border:      rgba(11,11,11,0.10);
+    --accent:      #c98500;
+    --accent-ink:  #6b4700;
+    --good:        #0ca30c;
+    --bad:         #d03b3b;
+
+    --cat-vivienda:    #8b5a2b;
+    --cat-comida:      #2a78d6;
+    --cat-delivery:    #008300;
+    --cat-transporte:  #e87ba4;
+    --cat-servicios:   #eda100;
+    --cat-entret:      #1baf7a;
+    --cat-salud:       #eb6834;
+    --cat-compras:     #4a3aa7;
+    --cat-transf:      #e34948;
+    --cat-otros:       #898781;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:where(:not([data-theme="light"])) {
+      color-scheme: dark;
+      --page:        #0d0d0d;
+      --surface:     #1a1a19;
+      --surface-2:   #201f1c;
+      --ink:         #ffffff;
+      --ink-2:       #c3c2b7;
+      --muted:       #898781;
+      --grid:        #2c2c2a;
+      --border:      rgba(255,255,255,0.10);
+      --accent:      #eda100;
+      --accent-ink:  #ffd88a;
+      --good:        #0ca30c;
+      --bad:         #e66767;
+
+      --cat-vivienda:    #c9915a;
+      --cat-comida:      #3987e5;
+      --cat-delivery:    #008300;
+      --cat-transporte:  #d55181;
+      --cat-servicios:   #c98500;
+      --cat-entret:      #199e70;
+      --cat-salud:       #d95926;
+      --cat-compras:     #9085e9;
+      --cat-transf:      #e66767;
+      --cat-otros:       #898781;
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --page:#0d0d0d; --surface:#1a1a19; --surface-2:#201f1c;
+    --ink:#ffffff; --ink-2:#c3c2b7; --muted:#898781; --grid:#2c2c2a;
+    --border: rgba(255,255,255,0.10); --accent:#eda100; --accent-ink:#ffd88a; --good:#0ca30c; --bad:#e66767;
+    --cat-vivienda:#c9915a; --cat-comida:#3987e5; --cat-delivery:#008300; --cat-transporte:#d55181;
+    --cat-servicios:#c98500; --cat-entret:#199e70; --cat-salud:#d95926;
+    --cat-compras:#9085e9; --cat-transf:#e66767; --cat-otros:#898781;
+  }
+  :root[data-theme="light"] {
+    color-scheme: light;
+    --page: #f9f9f7; --surface:#fcfcfb; --surface-2:#f2f1ec;
+    --ink:#0b0b0b; --ink-2:#52514e; --muted:#898781; --grid:#e1e0d9;
+    --border: rgba(11,11,11,0.10); --accent:#c98500; --accent-ink:#6b4700; --good:#0ca30c; --bad:#d03b3b;
+    --cat-vivienda:#8b5a2b; --cat-comida:#2a78d6; --cat-delivery:#008300; --cat-transporte:#e87ba4;
+    --cat-servicios:#eda100; --cat-entret:#1baf7a; --cat-salud:#eb6834;
+    --cat-compras:#4a3aa7; --cat-transf:#e34948; --cat-otros:#898781;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--page);
+    color: var(--ink);
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    font-variant-numeric: tabular-nums;
+    font-size: 14px;
+  }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 20px 20px 60px; }
+
+  /* top bar */
+  .topbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding-bottom: 16px; border-bottom: 1px solid var(--border); margin-bottom: 18px; }
+  .topbar h1 { font-size: 17px; margin: 0; font-weight: 650; }
+  .refresh-status { font-size: 11.5px; color: var(--muted); display: flex; align-items: center; gap: 6px; }
+  .refresh-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--good); display:inline-block; }
+  .refresh-dot.stale { background: var(--muted); }
+  .sheet-link { font-size: 12px; color: var(--accent-ink); text-decoration: none; border: 1px solid var(--border); padding: 5px 10px; border-radius: 7px; }
+  .sheet-link:hover { background: var(--surface-2); }
+
+  /* tabs */
+  .tabs { display: flex; gap: 4px; margin-bottom: 18px; border-bottom: 1px solid var(--border); }
+  .tab-btn {
+    appearance: none; border: none; background: none; cursor: pointer;
+    font-family: inherit; font-size: 13px; color: var(--ink-2); font-weight: 550;
+    padding: 9px 14px; border-bottom: 2px solid transparent; margin-bottom: -1px;
+  }
+  .tab-btn:hover { color: var(--ink); }
+  .tab-btn.active { color: var(--ink); border-bottom-color: var(--accent); }
+  .tab-btn .n { color: var(--muted); font-weight: 400; }
+
+  section { margin-top: 28px; }
+  section:first-of-type { margin-top: 0; }
+  .section-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 12px; flex-wrap: wrap; }
+  .section-head h2 { font-size: 13px; margin: 0; text-transform: uppercase; letter-spacing: 0.04em; color: var(--ink-2); font-weight: 650; }
+  .section-head .tag { font-size: 11.5px; color: var(--muted); }
+
+  .panel { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+
+  /* stat tiles */
+  .stat-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  @media (min-width: 700px) { .stat-row { grid-template-columns: repeat(4, 1fr); } }
+  .stat { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; }
+  .stat .k { font-size: 11px; color: var(--ink-2); margin-bottom: 5px; }
+  .stat .v { font-size: 20px; font-weight: 650; }
+  .stat .v.good { color: var(--good); }
+  .stat .v.bad { color: var(--bad); }
+  .stat .v small { font-size: 12px; font-weight: 500; color: var(--ink-2); }
+  .stat .sub { font-size: 11px; color: var(--muted); margin-top: 3px; }
+
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; }
+  .card + .card { margin-top: 12px; }
+  .card h3 { margin: 0 0 4px; font-size: 11.5px; font-weight: 650; color: var(--ink-2); text-transform: uppercase; letter-spacing: 0.03em; }
+
+  .donut-wrap { display: flex; align-items: center; gap: 18px; margin-top: 8px; flex-wrap: wrap; justify-content: space-between; }
+  svg.donut { flex: 1 1 auto; max-width: 100%; height: auto; min-width: 120px; }
+  .donut-legend { display: flex; flex-direction: column; gap: 8px; font-size: 12px; flex: 1 1 220px; min-width: 190px; }
+  .donut-legend li { list-style: none; display: flex; align-items: center; gap: 8px; }
+  .donut-legend .name { text-align: left; color: var(--ink); }
+  .donut-legend .pct { color: var(--ink-2); margin-left: 8px; }
+  .donut-legend .amt-col { margin-left: auto; padding-left: 10px; text-align: right; }
+  .delta { font-size: 10.5px; display: block; }
+  .delta.up { color: var(--bad); }
+  .delta.down { color: var(--good); }
+  .delta.new { color: var(--muted); }
+  .cat-swatch { width: 8px; height: 8px; border-radius: 2px; display: inline-block; flex: none; }
+
+  .donut-seg { cursor: pointer; transition: opacity 0.1s; }
+  .donut-seg:hover { opacity: 0.82; }
+  .donut-tooltip {
+    position: fixed; display: none; pointer-events: none; z-index: 50;
+    background: var(--ink); color: var(--page); font-size: 12px; line-height: 1.4;
+    padding: 6px 10px; border-radius: 7px; white-space: nowrap;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.25);
+  }
+  .donut-tooltip b { font-weight: 650; }
+
+  .bars { display: flex; flex-direction: column; gap: 10px; margin-top: 8px; }
+  .bar-row { display: grid; grid-template-columns: 88px 1fr 76px; align-items: center; gap: 10px; font-size: 12.5px; }
+  .bar-track { background: var(--surface-2); border-radius: 5px; height: 9px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 5px; }
+  .bar-val { text-align: right; color: var(--ink-2); }
+
+  /* ingresos */
+  .ing-list { display: flex; flex-direction: column; gap: 6px; margin: 8px 0; max-height: 140px; overflow-y: auto; }
+  .ing-row { display: grid; grid-template-columns: 1fr auto auto; align-items: center; gap: 8px; font-size: 12.5px; padding: 4px 0; border-bottom: 1px solid var(--grid); }
+  .ing-month { color: var(--muted); font-size: 10.5px; }
+  .ing-amt { color: var(--good); font-weight: 600; }
+  .ing-del { appearance: none; border: none; background: none; color: var(--muted); cursor: pointer; font-size: 15px; line-height: 1; padding: 0 2px; }
+  .ing-del:hover { color: var(--bad); }
+  .ing-form { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .ing-form input[type="text"] { flex: 1 1 130px; }
+  .ing-form input[type="number"] { flex: 1 1 76px; }
+  .ing-form select { flex: 0 0 58px; }
+  .ing-form input, .ing-form select {
+    font-family: inherit; font-size: 12.5px; padding: 6px 8px; border-radius: 6px;
+    border: 1px solid var(--border); background: var(--surface); color: var(--ink);
+  }
+  .ing-form button {
+    flex: 0 0 32px;
+    appearance: none; border: 1px solid var(--border); background: var(--accent); color: #fff;
+    border-radius: 6px; font-size: 15px; cursor: pointer;
+  }
+  .ing-empty { font-size: 12px; color: var(--muted); margin: 4px 0; }
+  .ing-hint { font-size: 11px; color: var(--muted); margin-top: 8px; }
+
+  /* table */
+  .table-scroll { overflow-x: auto; max-height: 560px; overflow-y: auto; }
+  table.tx { width: 100%; border-collapse: collapse; font-size: 12.5px; min-width: 680px; }
+  table.tx th {
+    text-align: left; font-weight: 650; color: var(--ink-2);
+    background: var(--surface-2); padding: 8px 12px; white-space: nowrap;
+    border-bottom: 1px solid var(--grid); position: sticky; top: 0; z-index: 1;
+  }
+  table.tx td { padding: 7px 12px; border-bottom: 1px solid var(--grid); white-space: nowrap; }
+  table.tx td.monto { text-align: right; font-weight: 600; }
+  table.tx tr:hover td { background: var(--surface-2); }
+  .cat-chip { display: inline-flex; align-items: center; gap: 6px; }
+  .bank-chip { font-size: 11px; color: var(--muted); }
+  .usd-tag { font-size: 10px; color: var(--bad); border: 1px solid currentColor; border-radius: 4px; padding: 0 4px; margin-left: 6px; }
+
+  footer.note {
+    margin-top: 36px; padding-top: 16px; border-top: 1px solid var(--border);
+    font-size: 11.5px; color: var(--muted); line-height: 1.6;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="topbar">
+    <h1>Finanzas Enzo</h1>
+    <div style="display:flex; align-items:center; gap:14px;">
+      <span class="refresh-status" id="refreshStatus"><i class="refresh-dot" id="refreshDot"></i><span id="refreshText">cargando…</span></span>
+      <a class="sheet-link" href="https://docs.google.com/spreadsheets/d/1NOZUee92QD4B2LxLiW4ulFZTNSwIWLtfkUd8QqeLCQE/edit" target="_blank">Abrir Sheet ↗</a>
+    </div>
+  </div>
+
+  <div class="tabs" id="tabs"></div>
+
+  <div id="views"></div>
+
+  <div class="donut-tooltip" id="donutTooltip"></div>
+
+  <footer class="note" id="footerNote"></footer>
+
+</div>
+
+<script>
+// ---- datos base (snapshot al momento de generar este archivo; se reemplaza al hacer fetch) ----
+const TX_INITIAL = [
+{f:"2026-06-01",h:"02:17 PM",b:"BCP",t:"Yape",m:48.00,c:"PEN",mp:48.00,tc:null,co:"Yape a Miguel A Holguin S.",cat:"Transferencias"},
+{f:"2026-06-01",h:"08:25 PM",b:"BCP",t:"Consumo",m:54.26,c:"PEN",mp:54.26,tc:null,co:"CA010 ARMENDARIZ",cat:"Delivery/Restaurantes"},
+{f:"2026-06-03",h:"07:14 PM",b:"BCP",t:"Consumo",m:9.39,c:"PEN",mp:9.39,tc:null,co:"RAPPI SAC",cat:"Delivery/Restaurantes"},
+{f:"2026-06-03",h:"07:40 PM",b:"BCP",t:"Consumo",m:14.61,c:"PEN",mp:14.61,tc:null,co:"RAPPI SAC",cat:"Delivery/Restaurantes"},
+{f:"2026-06-05",h:"12:56 PM",b:"BCP",t:"Yape",m:10.00,c:"PEN",mp:10.00,tc:null,co:"Yape a Facundo O Pretel P.",cat:"Transferencias"},
+{f:"2026-06-05",h:"10:40 PM",b:"BCP",t:"Consumo",m:167.80,c:"PEN",mp:167.80,tc:null,co:"RESTAURANTE CIRCO",cat:"Delivery/Restaurantes"},
+{f:"2026-06-06",h:"09:52 AM",b:"BCP",t:"Consumo",m:235.81,c:"PEN",mp:235.81,tc:null,co:"RAPPI SAC",cat:"Delivery/Restaurantes"},
+{f:"2026-06-06",h:"02:07 PM",b:"BCP",t:"Consumo",m:66.31,c:"PEN",mp:66.31,tc:null,co:"RAPPI SAC",cat:"Delivery/Restaurantes"},
+{f:"2026-06-06",h:"06:39 PM",b:"BCP",t:"Yape",m:90.00,c:"PEN",mp:90.00,tc:null,co:"Yape a Claudia K Chuquillanqui M.",cat:"Transferencias"},
+{f:"2026-06-06",h:"09:16 PM",b:"BCP",t:"Consumo",m:38.36,c:"PEN",mp:38.36,tc:null,co:"RAPPI SAC",cat:"Delivery/Restaurantes"},
+{f:"2026-06-07",h:"03:49 PM",b:"BCP",t:"Consumo",m:72.52,c:"PEN",mp:72.52,tc:null,co:"RAPPI SAC",cat:"Delivery/Restaurantes"},
+{f:"2026-06-08",h:"07:44 PM",b:"BCP",t:"Consumo",m:19.98,c:"PEN",mp:19.98,tc:null,co:"RAPPI SAC",cat:"Delivery/Restaurantes"},
+{f:"2026-06-09",h:"04:35 PM",b:"BCP",t:"Consumo",m:18.18,c:"PEN",mp:18.18,tc:null,co:"RAPPI SAC",cat:"Delivery/Restaurantes"},
+{f:"2026-06-09",h:"04:37 PM",b:"BCP",t:"Yape",m:15.00,c:"PEN",mp:15.00,tc:null,co:"Yape a John S Cordova Q.",cat:"Transferencias"},
+{f:"2026-06-10",h:"07:22 PM",b:"BCP",t:"Consumo",m:69.22,c:"PEN",mp:69.22,tc:null,co:"RAPPI SAC",cat:"Delivery/Restaurantes"},
+{f:"2026-06-11",h:"11:30 AM",b:"BCP",t:"Yape",m:120.00,c:"PEN",mp:120.00,tc:null,co:"Yape a Ariel Gustavo Vega X.",cat:"Transferencias"},
+{f:"2026-06-11",h:"07:55 PM",b:"BCP",t:"Consumo",m:26.70,c:"PEN",mp:26.70,tc:null,co:"RAPPI SAC",cat:"Delivery/Restaurantes"},
+{f:"2026-06-12",h:"04:35 PM",b:"BCP",t:"Consumo",m:14.61,c:"PEN",mp:14.61,tc:null,co:"RAPPI SAC",cat:"Delivery/Restaurantes"},
+{f:"2026-06-12",h:"09:25 PM",b:"BCP",t:"Consumo",m:23.52,c:"PEN",mp:23.52,tc:null,co:"RAPPI SAC",cat:"Delivery/Restaurantes"},
+{f:"2026-06-13",h:"03:08 PM",b:"BCP",t:"Consumo",m:14.50,c:"PEN",mp:14.50,tc:null,co:"IZI*Q CHURROS",cat:"Delivery/Restaurantes"},
+{f:"2026-06-13",h:"04:56 PM",b:"BCP",t:"Consumo",m:60.00,c:"PEN",mp:60.00,tc:null,co:"OVALO MONITOR",cat:"Otros"},
+{f:"2026-06-14",h:"09:46 AM",b:"BCP",t:"Consumo",m:30.83,c:"PEN",mp:30.83,tc:null,co:"RAPPI SAC",cat:"Delivery/Restaurantes"},
+{f:"2026-06-14",h:"02:28 PM",b:"BCP",t:"Consumo",m:46.01,c:"PEN",mp:46.01,tc:null,co:"RAPPI SAC",cat:"Delivery/Restaurantes"},
+{f:"2026-06-14",h:"07:37 PM",b:"BCP",t:"Yape",m:90.00,c:"PEN",mp:90.00,tc:null,co:"Yape a Claudia K Chuquillanqui M.",cat:"Transferencias"},
+{f:"2026-06-16",h:"01:05 PM",b:"BCP",t:"Yape",m:10.00,c:"PEN",mp:10.00,tc:null,co:"Yape a Facundo O Pretel P.",cat:"Transferencias"},
+{f:"2026-06-16",h:"07:38 PM",b:"BCP",t:"Consumo",m:32.02,c:"PEN",mp:32.02,tc:null,co:"RAPPI SAC",cat:"Delivery/Restaurantes"},
+{f:"2026-06-18",h:"09:50 AM",b:"BCP",t:"Yape",m:100.00,c:"PEN",mp:100.00,tc:null,co:"Yape a Patricia K Mayta T.",cat:"Transferencias"},
+{f:"2026-06-18",h:"07:14 PM",b:"BCP",t:"Consumo",m:52.01,c:"PEN",mp:52.01,tc:null,co:"RAPPI SAC",cat:"Delivery/Restaurantes"},
+{f:"2026-06-18",h:"08:24 PM",b:"BCP",t:"Consumo",m:36.12,c:"PEN",mp:36.12,tc:null,co:"RAPPI SAC",cat:"Delivery/Restaurantes"},
+{f:"2026-06-18",h:"09:39 PM",b:"BCP",t:"Consumo",m:20.47,c:"PEN",mp:20.47,tc:null,co:"RAPPI SAC",cat:"Delivery/Restaurantes"},
+{f:"2026-06-18",h:"10:10 PM",b:"BCP",t:"Consumo",m:27.90,c:"PEN",mp:27.90,tc:null,co:"DLC*RAPPI PRO PERU",cat:"Entretenimiento"},
+{f:"2026-06-19",h:"02:42 PM",b:"BCP",t:"Pago de servicio",m:4940.00,c:"PEN",mp:4940.00,tc:null,co:"Grupo Computer Shop EIRL",cat:"Compras/Retail"},
+{f:"2026-06-19",h:"09:18 PM",b:"BCP",t:"Consumo",m:31.41,c:"PEN",mp:31.41,tc:null,co:"RAPPI SAC",cat:"Delivery/Restaurantes"},
+{f:"2026-06-20",h:"10:01 AM",b:"BCP",t:"Consumo",m:69.40,c:"PEN",mp:69.40,tc:null,co:"MFAG55 ALCANFORES",cat:"Otros"},
+{f:"2026-06-20",h:"10:16 AM",b:"BCP",t:"Consumo",m:6.80,c:"PEN",mp:6.80,tc:null,co:"IKF O18 LARCO 3",cat:"Salud"},
+{f:"2026-06-20",h:"10:22 AM",b:"BCP",t:"Consumo",m:49.90,c:"PEN",mp:49.90,tc:null,co:"COOLBOX B55",cat:"Otros"},
+{f:"2026-06-20",h:"10:40 AM",b:"BCP",t:"Consumo",m:28.30,c:"PEN",mp:28.30,tc:null,co:"IZI*BODEGA CAFE CHUPIMO",cat:"Delivery/Restaurantes"},
+{f:"2026-06-20",h:"02:34 PM",b:"BCP",t:"Consumo",m:67.32,c:"PEN",mp:67.32,tc:null,co:"RAPPI SAC",cat:"Delivery/Restaurantes"},
+{f:"2026-06-20",h:"04:36 PM",b:"BCP",t:"Yape",m:90.00,c:"PEN",mp:90.00,tc:null,co:"Yape a Claudia K Chuquillanqui M.",cat:"Transferencias"},
+{f:"2026-06-21",h:"01:44 AM",b:"BCP",t:"Consumo",m:235.44,c:"PEN",mp:235.44,tc:null,co:"GO PET SOL VTEX",cat:"Compras/Retail"},
+{f:"2026-06-21",h:"12:06 PM",b:"BCP",t:"Yape",m:50.00,c:"PEN",mp:50.00,tc:null,co:"Yape a Jaime A Chavez N.",cat:"Transferencias"},
+{f:"2026-06-21",h:"06:18 PM",b:"BCP",t:"Consumo",m:59.62,c:"USD",mp:201.99,tc:3.388,co:"Holafly",cat:"Servicios"},
+{f:"2026-06-22",h:"01:39 PM",b:"BCP",t:"Consumo",m:50.00,c:"PEN",mp:50.00,tc:null,co:"ENCANTOS MIRAFLORES",cat:"Otros"},
+{f:"2026-06-22",h:"04:54 PM",b:"BCP",t:"Consumo",m:11.70,c:"PEN",mp:11.70,tc:null,co:"SUC 36 MAESTRO SURQUILL",cat:"Compras/Retail"},
+{f:"2026-06-22",h:"06:29 PM",b:"BCP",t:"Consumo",m:85.39,c:"PEN",mp:85.39,tc:null,co:"WONG LARCOMAR",cat:"Comida/Supermercado"},
+{f:"2026-06-22",h:"06:39 PM",b:"BCP",t:"Consumo",m:4.90,c:"PEN",mp:4.90,tc:null,co:"WONG LARCOMAR",cat:"Comida/Supermercado"},
+{f:"2026-06-22",h:"06:52 PM",b:"BCP",t:"Consumo",m:111.90,c:"PEN",mp:111.90,tc:null,co:"MFAG46 ARMENDARIZ",cat:"Otros"},
+{f:"2026-06-27",h:"06:00 PM",b:"BCP",t:"Consumo",m:32.22,c:"PEN",mp:32.22,tc:null,co:"RAPPI SAC",cat:"Delivery/Restaurantes"},
+{f:"2026-06-27",h:"06:37 PM",b:"BCP",t:"Consumo",m:51.21,c:"PEN",mp:51.21,tc:null,co:"RAPPI SAC",cat:"Delivery/Restaurantes"},
+{f:"2026-06-29",h:"11:02 AM",b:"BCP",t:"Consumo",m:35.31,c:"PEN",mp:35.31,tc:null,co:"RAPPI SAC",cat:"Delivery/Restaurantes"},
+{f:"2026-06-29",h:"12:49 PM",b:"BCP",t:"Consumo",m:31.41,c:"PEN",mp:31.41,tc:null,co:"RAPPI SAC",cat:"Delivery/Restaurantes"},
+{f:"2026-06-29",h:"07:14 PM",b:"BCP",t:"Consumo",m:66.31,c:"PEN",mp:66.31,tc:null,co:"RAPPI SAC",cat:"Delivery/Restaurantes"},
+{f:"2026-06-30",h:"09:12 AM",b:"BCP",t:"Yape",m:10.00,c:"PEN",mp:10.00,tc:null,co:"Yape a Adriana Cecilia Ibarra E.",cat:"Transferencias"},
+{f:"2026-06-30",h:"10:29 AM",b:"BCP",t:"Yape",m:22.40,c:"PEN",mp:22.40,tc:null,co:"Yape a Manuel Jesus Cespedes D.",cat:"Transferencias"},
+{f:"2026-06-30",h:"01:31 PM",b:"BCP",t:"Consumo",m:263.00,c:"PEN",mp:263.00,tc:null,co:"IZI*PUNTA MADERO INVERS",cat:"Delivery/Restaurantes"},
+{f:"2026-06-30",h:"09:07 PM",b:"BCP",t:"Consumo",m:5.90,c:"PEN",mp:5.90,tc:null,co:"RAPPI SAC",cat:"Delivery/Restaurantes"},
+{f:"2026-07-01",h:"10:32 PM",b:"BCP",t:"Consumo",m:60.00,c:"PEN",mp:60.00,tc:null,co:"RESTAURANTE CIRCO",cat:"Delivery/Restaurantes"},
+{f:"2026-07-01",h:"10:39 PM",b:"BCP",t:"Consumo",m:79.90,c:"PEN",mp:79.90,tc:null,co:"MFAG46 ARMENDARIZ",cat:"Delivery/Restaurantes"},
+{f:"2026-07-02",h:"09:27 AM",b:"BCP",t:"Consumo",m:27.50,c:"PEN",mp:27.50,tc:null,co:"SB139 - LAP SALIDAS INTER",cat:"Otros"},
+{f:"2026-07-02",h:"04:49 PM",b:"BCP",t:"Consumo",m:9.97,c:"PEN",mp:9.97,tc:null,co:"RUMBO 450 T1",cat:"Compras/Retail"},
+{f:"2026-07-02",h:"07:25 PM",b:"BCP",t:"Consumo",m:3.34,c:"PEN",mp:3.34,tc:null,co:"HAULMER*DGUSTTY",cat:"Otros"},
+{f:"2026-07-05",h:"03:31 PM",b:"BCP",t:"Consumo",m:28.42,c:"PEN",mp:28.42,tc:null,co:"RAPPI SAC",cat:"Delivery/Restaurantes"},
+{f:"2026-07-05",h:"10:10 PM",b:"BCP",t:"Yape",m:90.00,c:"PEN",mp:90.00,tc:null,co:"Yape a Claudia K Chuquillanqui M.",cat:"Transferencias"},
+{f:"2026-07-06",h:"10:03 AM",b:"Interbank",t:"Consumo",m:9.90,c:"PEN",mp:9.90,tc:null,co:"Uber",cat:"Transporte"},
+{f:"2026-07-06",h:"10:36 AM",b:"BCP",t:"Consumo",m:177.00,c:"PEN",mp:177.00,tc:null,co:"PENARANDA PLANCHADO DOL",cat:"Servicios"},
+{f:"2026-07-06",h:"07:38 PM",b:"BCP",t:"Consumo",m:16.10,c:"PEN",mp:16.10,tc:null,co:"RAPPI SAC",cat:"Delivery/Restaurantes"},
+{f:"2026-07-07",h:"01:00 PM",b:"BCP",t:"Yape",m:10.00,c:"PEN",mp:10.00,tc:null,co:"Yape a Facundo O Pretel P.",cat:"Transferencias"},
+{f:"2026-07-08",h:"06:55 PM",b:"BCP",t:"Consumo",m:226.17,c:"PEN",mp:226.17,tc:null,co:"E S ROMA",cat:"Otros"},
+{f:"2026-07-08",h:"08:45 PM",b:"BCP",t:"Consumo",m:53.22,c:"PEN",mp:53.22,tc:null,co:"RAPPI SAC",cat:"Delivery/Restaurantes"},
+{f:"2026-07-09",h:"05:48 PM",b:"BCP",t:"Consumo",m:32.10,c:"PEN",mp:32.10,tc:null,co:"MFAG55 ALCANFORES",cat:"Delivery/Restaurantes"},
+{f:"2026-07-10",h:"08:58 PM",b:"BCP",t:"Consumo",m:14.88,c:"PEN",mp:14.88,tc:null,co:"ARMENDARIZ C1",cat:"Delivery/Restaurantes"},
+{f:"2026-07-10",h:"09:05 PM",b:"BCP",t:"Consumo",m:52.71,c:"PEN",mp:52.71,tc:null,co:"RAPPI SAC",cat:"Delivery/Restaurantes"},
+{f:"2026-07-11",h:"12:08 AM",b:"BCP",t:"Consumo",m:23.60,c:"PEN",mp:23.60,tc:null,co:"ANTHROPIC* CLAUDE SUB",cat:"Entretenimiento"},
+{f:"2026-07-11",h:"10:01 AM",b:"BCP",t:"Consumo",m:103.90,c:"PEN",mp:103.90,tc:null,co:"RIPLEY COM",cat:"Compras/Retail"},
+{f:"2026-07-11",h:"11:56 AM",b:"BCP",t:"Yape",m:14.30,c:"PEN",mp:14.30,tc:null,co:"Yape a Nicolas Carrasco H.",cat:"Transferencias"},
+{f:"2026-07-11",h:"12:50 PM",b:"BCP",t:"Consumo",m:3.50,c:"PEN",mp:3.50,tc:null,co:"E S EL AVION",cat:"Delivery/Restaurantes"},
+{f:"2026-07-11",h:"02:10 PM",b:"BCP",t:"Consumo",m:22.00,c:"PEN",mp:22.00,tc:null,co:"DULIMA 3327",cat:"Comida/Supermercado"},
+{f:"2026-07-11",h:"02:16 PM",b:"BCP",t:"Consumo",m:5.80,c:"PEN",mp:5.80,tc:null,co:"E S EL AVION",cat:"Delivery/Restaurantes"},
+{f:"2026-07-11",h:"04:01 PM",b:"BCP",t:"Consumo",m:82.50,c:"PEN",mp:82.50,tc:null,co:"KION",cat:"Compras/Retail"},
+{f:"2026-07-11",h:"07:59 PM",b:"BCP",t:"Consumo",m:125.98,c:"PEN",mp:125.98,tc:null,co:"Plaza Vea",cat:"Comida/Supermercado"},
+{f:"2026-07-11",h:"09:39 PM",b:"BCP",t:"Consumo",m:31.76,c:"PEN",mp:31.76,tc:null,co:"RAPPI SAC",cat:"Delivery/Restaurantes"},
+{f:"2026-07-12",h:"10:43 AM",b:"BCP",t:"Consumo",m:53.00,c:"PEN",mp:53.00,tc:null,co:"SB129 - AV. LARCO",cat:"Delivery/Restaurantes"},
+{f:"2026-07-12",h:"11:55 AM",b:"BCP",t:"Consumo",m:249.80,c:"PEN",mp:249.80,tc:null,co:"HYM LARCOMAR",cat:"Compras/Retail"},
+{f:"2026-07-12",h:"01:48 PM",b:"BCP",t:"Consumo",m:54.00,c:"PEN",mp:54.00,tc:null,co:"LARCOMAR",cat:"Otros"},
+{f:"2026-07-12",h:"01:57 PM",b:"BCP",t:"Consumo",m:118.93,c:"PEN",mp:118.93,tc:null,co:"CALVIN KLEIN LARCOMAR",cat:"Compras/Retail"},
+{f:"2026-07-12",h:"06:34 PM",b:"BCP",t:"Yape",m:90.00,c:"PEN",mp:90.00,tc:null,co:"Yape a Claudia K Chuquillanqui M.",cat:"Transferencias"},
+{f:"2026-07-12",h:"07:04 PM",b:"BCP",t:"Consumo",m:941.88,c:"USD",mp:3208.04,tc:3.406,co:"COPA",cat:"Transporte"},
+{f:"2026-07-12",h:"07:27 PM",b:"BCP",t:"Consumo",m:32.83,c:"PEN",mp:32.83,tc:null,co:"RAPPI SAC",cat:"Delivery/Restaurantes"},
+{f:"2026-07-13",h:"06:25 PM",b:"BCP",t:"Consumo",m:324.54,c:"PEN",mp:324.54,tc:null,co:"Smart Fit Peru",cat:"Salud"},
+{f:"2026-07-13",h:"08:15 PM",b:"BCP",t:"Consumo",m:31.41,c:"PEN",mp:31.41,tc:null,co:"RAPPI SAC",cat:"Delivery/Restaurantes"},
+{f:"2026-07-13",h:"10:09 PM",b:"BCP",t:"Consumo",m:2999.00,c:"PEN",mp:2999.00,tc:null,co:"JUNTOZ COM MSI BCP",cat:"Compras/Retail"},
+{f:"2026-07-14",h:"06:43 PM",b:"BCP",t:"Consumo",m:50.00,c:"PEN",mp:50.00,tc:null,co:"ENCANTOS MIRAFLORES",cat:"Otros"},
+{f:"2026-07-14",h:"08:28 PM",b:"BCP",t:"Consumo",m:98.80,c:"PEN",mp:98.80,tc:null,co:"RESTAURANTE CIRCO",cat:"Delivery/Restaurantes"},
+{f:"2026-07-15",h:"08:44 PM",b:"BCP",t:"Consumo",m:30.07,c:"PEN",mp:30.07,tc:null,co:"RAPPI SAC",cat:"Delivery/Restaurantes"},
+{f:"2026-07-16",h:"08:59 PM",b:"BCP",t:"Consumo",m:14.18,c:"PEN",mp:14.18,tc:null,co:"RAPPI SAC",cat:"Delivery/Restaurantes"},
+{f:"2026-07-17",h:"06:31 PM",b:"BCP",t:"Yape",m:90.00,c:"PEN",mp:90.00,tc:null,co:"Yape a Claudia K Chuquillanqui M.",cat:"Transferencias"},
+{f:"2026-07-18",h:"12:29 PM",b:"BCP",t:"Consumo",m:66.31,c:"PEN",mp:66.31,tc:null,co:"RAPPI SAC",cat:"Delivery/Restaurantes"},
+{f:"2026-07-18",h:"07:42 PM",b:"BCP",t:"Consumo",m:39.31,c:"PEN",mp:39.31,tc:null,co:"RAPPI SAC",cat:"Delivery/Restaurantes"},
+];
+
+const CAT_COLOR = {
+  "Vivienda": "var(--cat-vivienda)",
+  "Comida/Supermercado": "var(--cat-comida)",
+  "Delivery/Restaurantes": "var(--cat-delivery)",
+  "Transporte": "var(--cat-transporte)",
+  "Servicios": "var(--cat-servicios)",
+  "Entretenimiento": "var(--cat-entret)",
+  "Salud": "var(--cat-salud)",
+  "Compras/Retail": "var(--cat-compras)",
+  "Transferencias": "var(--cat-transf)",
+  "Otros": "var(--cat-otros)"
+};
+const CAT_ORDER = Object.keys(CAT_COLOR);
+
+const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/1NOZUee92QD4B2LxLiW4ulFZTNSwIWLtfkUd8QqeLCQE/export?format=csv";
+const REFRESH_MS = 5 * 60 * 1000;
+const RENT_AMOUNT = 3000;
+const RENT_DAY = 15;
+const INGRESOS_KEY = "finanzasEnzoIngresos_v1";
+
+let TX = [];
+let activeTab = "consolidado";
+let lastRefreshOk = null;
+let lastRefreshTime = null;
+
+function fmtMoney(n) {
+  return n.toLocaleString("es-PE", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+function fmtDate(f) {
+  const [y,m,d] = f.split("-");
+  return `${d}/${m}/${y}`;
+}
+function monthKey(f) { return f.slice(0,7); }
+function monthLabel(k) {
+  const names = {"01":"Enero","02":"Febrero","03":"Marzo","04":"Abril","05":"Mayo","06":"Junio","07":"Julio","08":"Agosto","09":"Septiembre","10":"Octubre","11":"Noviembre","12":"Diciembre"};
+  const [y,m] = k.split("-");
+  return `${names[m]} ${y}`;
+}
+function prevMonthKey(k) {
+  const [y,m] = k.split("-").map(Number);
+  const d = new Date(y, m-2, 1); // m is 1-indexed; m-2 -> previous month, 0-indexed
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`;
+}
+
+// Agrega el alquiler fijo (S/3000, día 15) para cada mes presente en los datos, si no existe ya.
+function injectFixedExpenses(rows) {
+  const months = new Set(rows.map(r => monthKey(r.f)));
+  const out = rows.slice();
+  for (const mk of months) {
+    const already = rows.some(r => r.cat === "Vivienda" && monthKey(r.f) === mk);
+    if (!already) {
+      out.push({
+        f: `${mk}-${String(RENT_DAY).padStart(2,"0")}`, h: "12:00 AM", b: "Manual", t: "Gasto fijo",
+        m: RENT_AMOUNT, c: "PEN", mp: RENT_AMOUNT, tc: null, co: "Alquiler mensual", cat: "Vivienda"
+      });
+    }
+  }
+  return out;
+}
+
+function setTX(rows) { TX = injectFixedExpenses(rows); }
+
+// ---- ingresos (manuales, persistidos en este navegador) ----
+function loadIngresos() {
+  try { return JSON.parse(localStorage.getItem(INGRESOS_KEY) || "{}"); } catch (e) { return {}; }
+}
+function saveIngresos(data) {
+  try { localStorage.setItem(INGRESOS_KEY, JSON.stringify(data)); } catch (e) {}
+}
+function addIngreso(mk, desc, amount, moneda, tipoCambio) {
+  const data = loadIngresos();
+  data[mk] = data[mk] || [];
+  const montoPEN = moneda === "USD" ? amount * tipoCambio : amount;
+  data[mk].push({
+    id: Date.now().toString(36) + Math.random().toString(36).slice(2),
+    desc, amount, moneda: moneda || "PEN", tipoCambio: moneda === "USD" ? tipoCambio : null, montoPEN
+  });
+  saveIngresos(data);
+}
+async function fetchUSDPENRate() {
+  try {
+    const res = await fetch("https://open.er-api.com/v6/latest/USD", { cache: "no-store" });
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    const data = await res.json();
+    const rate = data && data.rates && data.rates.PEN;
+    return (typeof rate === "number" && rate > 0) ? rate : null;
+  } catch (e) { return null; }
+}
+function removeIngreso(mk, id) {
+  const data = loadIngresos();
+  data[mk] = (data[mk] || []).filter(x => x.id !== id);
+  saveIngresos(data);
+}
+function ingresosForScope(monthKeys) {
+  const data = loadIngresos();
+  let list = [];
+  for (const mk of monthKeys) list = list.concat((data[mk] || []).map(x => ({ ...x, month: mk })));
+  return list.sort((a,b) => a.month.localeCompare(b.month));
+}
+function incomeBySource(list) {
+  const totals = {};
+  for (const x of list) totals[x.desc] = (totals[x.desc]||0) + Number(x.montoPEN);
+  return totals;
+}
+
+function computeStats(rows) {
+  // Todo se totaliza en soles (r.mp = monto en soles; para filas USD ya viene convertido
+  // al tipo de cambio del día de ese consumo). r.m/r.c guardan el monto original para mostrarlo.
+  let totalPEN = 0, totalUSDOrigin = 0;
+  const byCat = {}, byCatFromUSD = {}, byMerchant = {};
+  for (const r of rows) {
+    totalPEN += r.mp;
+    byCat[r.cat] = (byCat[r.cat]||0) + r.mp;
+    if (r.c === "USD") {
+      totalUSDOrigin += r.m;
+      byCatFromUSD[r.cat] = (byCatFromUSD[r.cat]||0) + r.mp;
+    }
+    byMerchant[r.co] = (byMerchant[r.co]||0) + 1;
+  }
+  const topMerchants = Object.entries(byMerchant).sort((a,b)=>b[1]-a[1]).slice(0,3);
+  const topCat = Object.entries(byCat).sort((a,b)=>b[1]-a[1])[0];
+  return { totalPEN, totalUSDOrigin, byCat, byCatFromUSD, topMerchants, topCat, count: rows.length };
+}
+
+function categoryTotalsForMonth(mk) {
+  const totals = {};
+  for (const r of TX) {
+    if (monthKey(r.f) === mk) totals[r.cat] = (totals[r.cat]||0) + r.mp;
+  }
+  return totals;
+}
+
+function segmentedDonutSVG(entries, total, size, strokeWidth, centerLabel, centerSub) {
+  const R = size/2 - strokeWidth/2 - 2, CIRC = 2*Math.PI*R;
+  let offset = 0;
+  let circles = `<circle r="${R}" fill="none" stroke="var(--surface-2)" stroke-width="${strokeWidth}"/>`;
+  for (const [label, amt, color] of entries) {
+    const len = total > 0 ? (amt/total)*CIRC : 0;
+    const pct = total > 0 ? (amt/total*100) : 0;
+    circles += `<circle class="donut-seg" data-cat="${label}" data-amt="${fmtMoney(amt)}" data-pct="${pct.toFixed(1)}"
+      r="${R}" fill="none" stroke="${color}" stroke-width="${strokeWidth}"
+      stroke-dasharray="${len.toFixed(2)} ${CIRC.toFixed(2)}" stroke-dashoffset="${(-offset).toFixed(2)}" transform="rotate(-90)"/>`;
+    offset += len;
+  }
+  const c = size/2;
+  return `<svg class="donut" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
+    <g transform="translate(${c},${c})">${circles}
+      <text text-anchor="middle" y="-3" fill="var(--ink)" font-size="${Math.max(13,size*0.075).toFixed(0)}" font-weight="650" style="pointer-events:none;">${centerLabel}</text>
+      <text text-anchor="middle" y="16" fill="var(--ink-2)" font-size="${Math.max(10,size*0.05).toFixed(0)}" style="pointer-events:none;">${centerSub}</text>
+    </g></svg>`;
+}
+
+function donutSVG(byCat, totalPEN, centerLabel, centerSub) {
+  const entries = CAT_ORDER.filter(c => byCat[c] > 0).map(c => [c, byCat[c], CAT_COLOR[c]]);
+  return segmentedDonutSVG(entries, totalPEN, 300, 36, centerLabel, centerSub);
+}
+
+const INCOME_PALETTE = ["var(--cat-comida)","var(--cat-delivery)","var(--cat-transporte)","var(--cat-servicios)","var(--cat-entret)","var(--cat-salud)","var(--cat-compras)","var(--cat-transf)","var(--cat-vivienda)","var(--cat-otros)"];
+
+function incomeDonutSVG(bySource, total, centerLabel, centerSub) {
+  const keys = Object.keys(bySource).sort((a,b)=>bySource[b]-bySource[a]);
+  const entries = keys.map((k,i) => [k, bySource[k], INCOME_PALETTE[i % INCOME_PALETTE.length]]);
+  return segmentedDonutSVG(entries, total, 150, 22, centerLabel, centerSub);
+}
+
+function incomeLegend(bySource, total) {
+  const keys = Object.keys(bySource).sort((a,b)=>bySource[b]-bySource[a]);
+  return `<ul class="donut-legend">` + keys.map((k,i) => {
+    const amt = bySource[k];
+    const pct = total > 0 ? (amt/total*100) : 0;
+    const color = INCOME_PALETTE[i % INCOME_PALETTE.length];
+    return `<li><i class="cat-swatch" style="background:${color}"></i><span class="name">${k}</span>
+      <span class="amt-col">S/ ${fmtMoney(amt)} <span class="pct">${pct.toFixed(1)}%</span></span></li>`;
+  }).join("") + `</ul>`;
+}
+
+function donutLegend(byCat, byCatFromUSD, totalPEN, prevTotals) {
+  const entries = CAT_ORDER.filter(c => byCat[c] > 0).sort((a,b)=>byCat[b]-byCat[a]);
+  return `<ul class="donut-legend">` + entries.map(c => {
+    const pct = totalPEN > 0 ? (byCat[c]/totalPEN*100) : 0;
+    const hasUSD = byCatFromUSD[c] > 0;
+    let deltaHtml = "";
+    if (prevTotals) {
+      const prev = prevTotals[c] || 0;
+      if (prev > 0) {
+        const diff = byCat[c] - prev;
+        const diffPct = (diff / prev) * 100;
+        const cls = diff > 0 ? "up" : (diff < 0 ? "down" : "");
+        const arrow = diff > 0 ? "▲" : (diff < 0 ? "▼" : "—");
+        deltaHtml = `<span class="delta ${cls}">${arrow} ${Math.abs(diffPct).toFixed(0)}% vs mes ant.</span>`;
+      } else {
+        deltaHtml = `<span class="delta new">nuevo este mes</span>`;
+      }
+    }
+    return `<li><i class="cat-swatch" style="background:${CAT_COLOR[c]}"></i><span class="name">${c}${hasUSD ? '<span class="usd-tag" title="incluye monto convertido de USD">USD</span>' : ""}</span>
+      <span class="amt-col">S/ ${fmtMoney(byCat[c])} <span class="pct">${pct.toFixed(1)}%</span>${deltaHtml}</span></li>`;
+  }).join("") + `</ul>`;
+}
+
+function ingresosCard(scopeMonthKeys, formMonthKey) {
+  const list = ingresosForScope(scopeMonthKeys);
+  const total = list.reduce((sum,x) => sum + Number(x.montoPEN), 0);
+  const bySource = incomeBySource(list);
+  const itemsHtml = list.length ? list.map(x => `
+    <div class="ing-row">
+      <span>${x.desc}${scopeMonthKeys.length>1 ? ` <span class="ing-month">(${monthLabel(x.month)})</span>` : ""}</span>
+      <span class="ing-amt">S/ ${fmtMoney(Number(x.montoPEN))}${x.moneda === "USD" ? `<span class="usd-tag" title="convertido">USD</span><br><span style="font-weight:400;color:var(--muted);font-size:10.5px;">US$ ${fmtMoney(Number(x.amount))} @ ${x.tipoCambio}</span>` : ""}</span>
+      <button class="ing-del" data-id="${x.id}" data-month="${x.month}" title="Eliminar">×</button>
+    </div>`).join("") : "";
+  const formHtml = formMonthKey ? `
+    <form class="ing-form" id="ingForm" data-month="${formMonthKey}">
+      <input type="text" id="ingDesc" placeholder="Fuente (ej. Sueldo)" required>
+      <input type="number" id="ingAmt" placeholder="Monto" step="0.01" min="0" required>
+      <select id="ingCur">
+        <option value="PEN">S/</option>
+        <option value="USD">US$</option>
+      </select>
+      <input type="number" id="ingRate" placeholder="T.C." step="0.001" min="0" style="display:none;">
+      <button type="submit" title="Agregar">+</button>
+    </form>` : `<p class="ing-hint">Andá a la pestaña de un mes específico para agregar ingresos.</p>`;
+  const chartHtml = list.length
+    ? `<div class="donut-wrap">
+        ${incomeDonutSVG(bySource, total, "S/ "+Math.round(total).toLocaleString("es-PE"), Object.keys(bySource).length+" fuentes")}
+        ${incomeLegend(bySource, total)}
+      </div>`
+    : `<p class="ing-empty">Todavía no cargaste ingresos${formMonthKey ? " para "+monthLabel(formMonthKey) : ""}.</p>`;
+  return `
+    <div class="card">
+      <h3>Ingresos${formMonthKey ? " — "+monthLabel(formMonthKey) : ""}</h3>
+      ${chartHtml}
+      ${itemsHtml ? `<div class="ing-list">${itemsHtml}</div>` : ""}
+      ${formHtml}
+    </div>`;
+}
+
+function txTable(rows) {
+  const sorted = rows.slice().sort((a,b) => (a.f+a.h).localeCompare(b.f+b.h)).reverse();
+  const rowsHtml = sorted.map(r => `
+    <tr>
+      <td>${fmtDate(r.f)}</td>
+      <td>${r.h}</td>
+      <td><span class="bank-chip">${r.b}</span></td>
+      <td>${r.t}</td>
+      <td class="monto">S/ ${fmtMoney(r.mp)}${r.c === "USD" ? `<span class="usd-tag" title="convertido">USD</span><br><span style="font-weight:400;color:var(--muted);font-size:10.5px;">US$ ${fmtMoney(r.m)} @ ${r.tc}</span>` : ""}</td>
+      <td>${r.co}</td>
+      <td><span class="cat-chip"><i class="cat-swatch" style="background:${CAT_COLOR[r.cat]||'var(--cat-otros)'}"></i>${r.cat}</span></td>
+    </tr>`).join("");
+  return `<div class="panel table-scroll"><table class="tx">
+    <thead><tr><th>Fecha</th><th>Hora</th><th>Banco</th><th>Tipo</th><th>Monto</th><th>Comercio</th><th>Categoría</th></tr></thead>
+    <tbody>${rowsHtml}</tbody>
+  </table></div>`;
+}
+
+function renderMonthOrConsolidated(rows, subLabel, scopeMonthKeys, formMonthKey, prevTotals) {
+  const s = computeStats(rows);
+  const topCatName = s.topCat ? s.topCat[0] : "—";
+  const ingresosTotal = ingresosForScope(scopeMonthKeys).reduce((sum,x) => sum + Number(x.montoPEN), 0);
+  return `
+    <div class="stat-row">
+      <div class="stat"><div class="k">Ingresos</div><div class="v good">S/ ${fmtMoney(ingresosTotal)}</div></div>
+      <div class="stat"><div class="k">Gastos</div><div class="v">S/ ${fmtMoney(s.totalPEN)}</div>${s.totalUSDOrigin>0 ? `<div class="sub">incluye US$ ${fmtMoney(s.totalUSDOrigin)} convertidos</div>` : ""}</div>
+      <div class="stat"><div class="k">Movimientos</div><div class="v">${s.count}</div></div>
+      <div class="stat"><div class="k">Categoría líder</div><div class="v" style="font-size:16px;">${topCatName}</div></div>
+    </div>
+    ${ingresosCard(scopeMonthKeys, formMonthKey)}
+    <div class="card">
+      <h3>Gasto por categoría (todo en soles)</h3>
+      <div class="donut-wrap">
+        ${donutSVG(s.byCat, s.totalPEN, "S/ "+Math.round(s.totalPEN).toLocaleString("es-PE"), s.count+" movs.")}
+        ${donutLegend(s.byCat, s.byCatFromUSD, s.totalPEN, prevTotals)}
+      </div>
+      ${s.totalUSDOrigin>0 ? `<p style="font-size:11px;color:var(--muted);margin:10px 0 0;">Las categorías marcadas <span class="usd-tag" style="margin:0 2px;">USD</span> incluyen un consumo originalmente en dólares, convertido a soles al tipo de cambio del día de esa compra.</p>` : ""}
+      ${!prevTotals ? `<p style="font-size:11px;color:var(--muted);margin:10px 0 0;">La comparación con el mes anterior aparece dentro de cada pestaña de mes (no en Consolidado, ni en el primer mes con datos).</p>` : ""}
+    </div>
+    <section>
+      <div class="section-head"><h2>Todos los movimientos${subLabel ? " — "+subLabel : ""}</h2><span class="tag">${s.count} filas</span></div>
+      ${txTable(rows)}
+    </section>
+  `;
+}
+
+function render() {
+  const months = {};
+  for (const r of TX) {
+    const k = monthKey(r.f);
+    (months[k] = months[k] || []).push(r);
+  }
+  const monthKeys = Object.keys(months).sort();
+
+  // tabs
+  const tabsEl = document.getElementById("tabs");
+  let tabsHtml = `<button class="tab-btn ${activeTab==='consolidado'?'active':''}" data-tab="consolidado">Consolidado <span class="n">(${TX.length})</span></button>`;
+  for (const k of monthKeys) {
+    tabsHtml += `<button class="tab-btn ${activeTab===k?'active':''}" data-tab="${k}">${monthLabel(k)} <span class="n">(${months[k].length})</span></button>`;
+  }
+  tabsEl.innerHTML = tabsHtml;
+  tabsEl.querySelectorAll(".tab-btn").forEach(btn => {
+    btn.addEventListener("click", () => { activeTab = btn.dataset.tab; render(); });
+  });
+
+  // views
+  const viewsEl = document.getElementById("views");
+  if (activeTab === "consolidado") {
+    viewsEl.innerHTML = renderMonthOrConsolidated(TX, "todos los meses", monthKeys, null, null);
+  } else {
+    const pmk = prevMonthKey(activeTab);
+    const prevTotals = monthKeys.includes(pmk) ? categoryTotalsForMonth(pmk) : null;
+    viewsEl.innerHTML = renderMonthOrConsolidated(months[activeTab] || [], monthLabel(activeTab), [activeTab], activeTab, prevTotals);
+  }
+
+  // ingresos: form + botones de borrar
+  const ingForm = document.getElementById("ingForm");
+  if (ingForm) {
+    const curSel = document.getElementById("ingCur");
+    const rateInput = document.getElementById("ingRate");
+    curSel.addEventListener("change", async () => {
+      const isUSD = curSel.value === "USD";
+      rateInput.style.display = isUSD ? "" : "none";
+      rateInput.required = isUSD;
+      if (isUSD && !rateInput.value) {
+        rateInput.placeholder = "buscando…";
+        const r = await fetchUSDPENRate();
+        rateInput.placeholder = "T.C.";
+        if (r) rateInput.value = r.toFixed(3);
+      }
+    });
+    ingForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const desc = document.getElementById("ingDesc").value.trim();
+      const amt = parseFloat(document.getElementById("ingAmt").value);
+      const moneda = curSel.value;
+      const rate = moneda === "USD" ? parseFloat(rateInput.value) : null;
+      if (!desc || isNaN(amt) || amt <= 0) return;
+      if (moneda === "USD" && (isNaN(rate) || rate <= 0)) return;
+      addIngreso(ingForm.dataset.month, desc, amt, moneda, rate);
+      render();
+    });
+  }
+  viewsEl.querySelectorAll(".ing-del").forEach(btn => {
+    btn.addEventListener("click", () => { removeIngreso(btn.dataset.month, btn.dataset.id); render(); });
+  });
+
+  // tooltip del gráfico de categorías (compartido entre gastos e ingresos)
+  const tooltip = document.getElementById("donutTooltip");
+  viewsEl.querySelectorAll(".donut-seg").forEach(seg => {
+    seg.addEventListener("mouseenter", () => {
+      tooltip.innerHTML = `<b>${seg.dataset.cat}</b><br>S/ ${seg.dataset.amt} · ${seg.dataset.pct}%`;
+      tooltip.style.display = "block";
+    });
+    seg.addEventListener("mousemove", (e) => {
+      tooltip.style.left = (e.clientX + 14) + "px";
+      tooltip.style.top = (e.clientY + 14) + "px";
+    });
+    seg.addEventListener("mouseleave", () => { tooltip.style.display = "none"; });
+  });
+
+  document.getElementById("footerNote").innerHTML =
+    `Categorías asignadas automáticamente por nombre de comercio — revisalas en el Sheet y corregí las que no correspondan. ` +
+    `Los consumos originalmente en dólares se convierten a soles al tipo de cambio venta SUNAT del día del consumo (o el hábil anterior más cercano si cayó fin de semana). ` +
+    `El alquiler (S/ ${RENT_AMOUNT.toLocaleString("es-PE")}, día ${RENT_DAY} de cada mes) se agrega automáticamente como gasto fijo. ` +
+    `Los ingresos se cargan a mano y se guardan solo en este navegador (no están en el Sheet ni se sincronizan entre dispositivos). Si los cargás en dólares, el tipo de cambio se intenta buscar automáticamente (si no se puede, se ingresa a mano) y el monto queda guardado ya convertido a soles.`;
+}
+
+function setRefreshStatus(ok, when) {
+  const dot = document.getElementById("refreshDot");
+  const text = document.getElementById("refreshText");
+  const t = when.toLocaleTimeString("es-PE", { hour: "2-digit", minute: "2-digit" });
+  if (ok) {
+    dot.classList.remove("stale");
+    text.textContent = `actualizado ${t}`;
+  } else {
+    dot.classList.add("stale");
+    text.textContent = `sin conexión al Sheet — mostrando datos de ${t}`;
+  }
+}
+
+function parseCSV(text) {
+  const lines = text.trim().split("\n");
+  const header = lines[0].split(",");
+  const idx = {
+    f: header.indexOf("Fecha"), h: header.indexOf("Hora"), b: header.indexOf("Banco"),
+    t: header.indexOf("Tipo"), m: header.indexOf("Monto"), c: header.indexOf("Moneda"),
+    mp: header.indexOf("MontoPEN"), tc: header.indexOf("TipoCambio"),
+    co: header.indexOf("Comercio"), cat: header.indexOf("Categoria")
+  };
+  const rows = [];
+  for (let i = 1; i < lines.length; i++) {
+    const line = lines[i];
+    if (!line || !/^\d{4}-\d{2}-\d{2}/.test(line)) continue; // skip blanks / summary rows
+    const cells = line.split(",");
+    const m = parseFloat(String(cells[idx.m]).replace(/,/g,""));
+    if (isNaN(m)) continue;
+    const c = cells[idx.c];
+    let mp = idx.mp >= 0 ? parseFloat(String(cells[idx.mp]).replace(/,/g,"")) : NaN;
+    if (isNaN(mp)) { mp = m; if (c === "USD") console.warn("Fila en USD sin MontoPEN — no se convirtió:", cells[idx.co]); }
+    const tc = idx.tc >= 0 && cells[idx.tc] ? parseFloat(cells[idx.tc]) : null;
+    rows.push({ f: cells[idx.f], h: cells[idx.h], b: cells[idx.b], t: cells[idx.t], m, c, mp, tc, co: cells[idx.co], cat: cells[idx.cat] });
+  }
+  return rows;
+}
+
+async function refresh() {
+  try {
+    const res = await fetch(SHEET_CSV_URL, { cache: "no-store" });
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    const text = await res.text();
+    const parsed = parseCSV(text);
+    if (parsed.length === 0) throw new Error("CSV vacío o formato inesperado");
+    setTX(parsed);
+    lastRefreshOk = true;
+  } catch (e) {
+    lastRefreshOk = false;
+    console.warn("No se pudo refrescar desde el Sheet:", e.message);
+  }
+  lastRefreshTime = new Date();
+  setRefreshStatus(lastRefreshOk, lastRefreshTime);
+  render();
+}
+
+setTX(TX_INITIAL);
+render();
+document.getElementById("refreshText").textContent = "cargando…";
+refresh();
+setInterval(refresh, REFRESH_MS);
+</script>
+</body>
+</html>
