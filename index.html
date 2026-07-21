@@ -21,13 +21,19 @@
     --bad:         #d03b3b;
 
     --cat-vivienda:    #8b5a2b;
-    --cat-comida:      #2a78d6;
+    --cat-casa:        #2a78d6;
     --cat-delivery:    #008300;
-    --cat-transporte:  #e87ba4;
+    --cat-restaurantes:#922b21;
+    --cat-taxis:       #e87ba4;
+    --cat-viajes:      #1a4fa0;
     --cat-servicios:   #eda100;
     --cat-entret:      #1baf7a;
     --cat-salud:       #eb6834;
     --cat-compras:     #4a3aa7;
+    --cat-vestimenta:  #c2185b;
+    --cat-gatos:       #c9a227;
+    --cat-carro:       #455a64;
+    --cat-trading:     #10b981;
     --cat-transf:      #e34948;
     --cat-otros:       #898781;
   }
@@ -48,13 +54,19 @@
       --bad:         #e66767;
 
       --cat-vivienda:    #c9915a;
-      --cat-comida:      #3987e5;
+      --cat-casa:        #3987e5;
       --cat-delivery:    #008300;
-      --cat-transporte:  #d55181;
+      --cat-restaurantes:#d1574a;
+      --cat-taxis:       #d55181;
+      --cat-viajes:      #4d79c7;
       --cat-servicios:   #c98500;
       --cat-entret:      #199e70;
       --cat-salud:       #d95926;
       --cat-compras:     #9085e9;
+      --cat-vestimenta:  #e8548c;
+      --cat-gatos:       #e0c04a;
+      --cat-carro:       #78909c;
+      --cat-trading:     #34d399;
       --cat-transf:      #e66767;
       --cat-otros:       #898781;
     }
@@ -64,18 +76,20 @@
     --page:#0d0d0d; --surface:#1a1a19; --surface-2:#201f1c;
     --ink:#ffffff; --ink-2:#c3c2b7; --muted:#898781; --grid:#2c2c2a;
     --border: rgba(255,255,255,0.10); --accent:#eda100; --accent-ink:#ffd88a; --good:#0ca30c; --bad:#e66767;
-    --cat-vivienda:#c9915a; --cat-comida:#3987e5; --cat-delivery:#008300; --cat-transporte:#d55181;
-    --cat-servicios:#c98500; --cat-entret:#199e70; --cat-salud:#d95926;
-    --cat-compras:#9085e9; --cat-transf:#e66767; --cat-otros:#898781;
+    --cat-vivienda:#c9915a; --cat-casa:#3987e5; --cat-delivery:#008300; --cat-restaurantes:#d1574a;
+    --cat-taxis:#d55181; --cat-viajes:#4d79c7; --cat-servicios:#c98500; --cat-entret:#199e70; --cat-salud:#d95926;
+    --cat-compras:#9085e9; --cat-vestimenta:#e8548c; --cat-gatos:#e0c04a; --cat-carro:#78909c; --cat-trading:#34d399;
+    --cat-transf:#e66767; --cat-otros:#898781;
   }
   :root[data-theme="light"] {
     color-scheme: light;
     --page: #f9f9f7; --surface:#fcfcfb; --surface-2:#f2f1ec;
     --ink:#0b0b0b; --ink-2:#52514e; --muted:#898781; --grid:#e1e0d9;
     --border: rgba(11,11,11,0.10); --accent:#c98500; --accent-ink:#6b4700; --good:#0ca30c; --bad:#d03b3b;
-    --cat-vivienda:#8b5a2b; --cat-comida:#2a78d6; --cat-delivery:#008300; --cat-transporte:#e87ba4;
-    --cat-servicios:#eda100; --cat-entret:#1baf7a; --cat-salud:#eb6834;
-    --cat-compras:#4a3aa7; --cat-transf:#e34948; --cat-otros:#898781;
+    --cat-vivienda:#8b5a2b; --cat-casa:#2a78d6; --cat-delivery:#008300; --cat-restaurantes:#922b21;
+    --cat-taxis:#e87ba4; --cat-viajes:#1a4fa0; --cat-servicios:#eda100; --cat-entret:#1baf7a; --cat-salud:#eb6834;
+    --cat-compras:#4a3aa7; --cat-vestimenta:#c2185b; --cat-gatos:#c9a227; --cat-carro:#455a64; --cat-trading:#10b981;
+    --cat-transf:#e34948; --cat-otros:#898781;
   }
 
   * { box-sizing: border-box; }
@@ -114,6 +128,10 @@
   .section-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 12px; flex-wrap: wrap; }
   .section-head h2 { font-size: 13px; margin: 0; text-transform: uppercase; letter-spacing: 0.04em; color: var(--ink-2); font-weight: 650; }
   .section-head .tag { font-size: 11.5px; color: var(--muted); }
+  .cat-filter {
+    font-family: inherit; font-size: 12px; padding: 5px 8px; border-radius: 6px;
+    border: 1px solid var(--border); background: var(--surface); color: var(--ink);
+  }
 
   .panel { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
 
@@ -169,9 +187,9 @@
   .ing-del { appearance: none; border: none; background: none; color: var(--muted); cursor: pointer; font-size: 15px; line-height: 1; padding: 0 2px; }
   .ing-del:hover { color: var(--bad); }
   .ing-form { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
-  .ing-form input[type="text"] { flex: 1 1 130px; }
   .ing-form input[type="number"] { flex: 1 1 76px; }
   .ing-form select { flex: 0 0 58px; }
+  .ing-form select#ingDesc { flex: 1 1 130px; }
   .ing-form input, .ing-form select {
     font-family: inherit; font-size: 12.5px; padding: 6px 8px; border-radius: 6px;
     border: 1px solid var(--border); background: var(--surface); color: var(--ink);
@@ -230,114 +248,120 @@
 // ---- datos base (snapshot al momento de generar este archivo; se reemplaza al hacer fetch) ----
 const TX_INITIAL = [
 {f:"2026-06-01",h:"02:17 PM",b:"BCP",t:"Yape",m:48.00,c:"PEN",mp:48.00,tc:null,co:"Yape a Miguel A Holguin S.",cat:"Transferencias"},
-{f:"2026-06-01",h:"08:25 PM",b:"BCP",t:"Consumo",m:54.26,c:"PEN",mp:54.26,tc:null,co:"CA010 ARMENDARIZ",cat:"Delivery/Restaurantes"},
-{f:"2026-06-03",h:"07:14 PM",b:"BCP",t:"Consumo",m:9.39,c:"PEN",mp:9.39,tc:null,co:"RAPPI SAC",cat:"Delivery/Restaurantes"},
-{f:"2026-06-03",h:"07:40 PM",b:"BCP",t:"Consumo",m:14.61,c:"PEN",mp:14.61,tc:null,co:"RAPPI SAC",cat:"Delivery/Restaurantes"},
+{f:"2026-06-01",h:"08:25 PM",b:"BCP",t:"Consumo",m:54.26,c:"PEN",mp:54.26,tc:null,co:"CA010 ARMENDARIZ",cat:"Restaurantes"},
+{f:"2026-06-03",h:"07:14 PM",b:"BCP",t:"Consumo",m:9.39,c:"PEN",mp:9.39,tc:null,co:"RAPPI SAC",cat:"Delivery"},
+{f:"2026-06-03",h:"07:40 PM",b:"BCP",t:"Consumo",m:14.61,c:"PEN",mp:14.61,tc:null,co:"RAPPI SAC",cat:"Delivery"},
 {f:"2026-06-05",h:"12:56 PM",b:"BCP",t:"Yape",m:10.00,c:"PEN",mp:10.00,tc:null,co:"Yape a Facundo O Pretel P.",cat:"Transferencias"},
-{f:"2026-06-05",h:"10:40 PM",b:"BCP",t:"Consumo",m:167.80,c:"PEN",mp:167.80,tc:null,co:"RESTAURANTE CIRCO",cat:"Delivery/Restaurantes"},
-{f:"2026-06-06",h:"09:52 AM",b:"BCP",t:"Consumo",m:235.81,c:"PEN",mp:235.81,tc:null,co:"RAPPI SAC",cat:"Delivery/Restaurantes"},
-{f:"2026-06-06",h:"02:07 PM",b:"BCP",t:"Consumo",m:66.31,c:"PEN",mp:66.31,tc:null,co:"RAPPI SAC",cat:"Delivery/Restaurantes"},
+{f:"2026-06-05",h:"10:40 PM",b:"BCP",t:"Consumo",m:167.80,c:"PEN",mp:167.80,tc:null,co:"RESTAURANTE CIRCO",cat:"Restaurantes"},
+{f:"2026-06-06",h:"09:52 AM",b:"BCP",t:"Consumo",m:235.81,c:"PEN",mp:235.81,tc:null,co:"RAPPI SAC",cat:"Delivery"},
+{f:"2026-06-06",h:"02:07 PM",b:"BCP",t:"Consumo",m:66.31,c:"PEN",mp:66.31,tc:null,co:"RAPPI SAC",cat:"Delivery"},
 {f:"2026-06-06",h:"06:39 PM",b:"BCP",t:"Yape",m:90.00,c:"PEN",mp:90.00,tc:null,co:"Yape a Claudia K Chuquillanqui M.",cat:"Transferencias"},
-{f:"2026-06-06",h:"09:16 PM",b:"BCP",t:"Consumo",m:38.36,c:"PEN",mp:38.36,tc:null,co:"RAPPI SAC",cat:"Delivery/Restaurantes"},
-{f:"2026-06-07",h:"03:49 PM",b:"BCP",t:"Consumo",m:72.52,c:"PEN",mp:72.52,tc:null,co:"RAPPI SAC",cat:"Delivery/Restaurantes"},
-{f:"2026-06-08",h:"07:44 PM",b:"BCP",t:"Consumo",m:19.98,c:"PEN",mp:19.98,tc:null,co:"RAPPI SAC",cat:"Delivery/Restaurantes"},
-{f:"2026-06-09",h:"04:35 PM",b:"BCP",t:"Consumo",m:18.18,c:"PEN",mp:18.18,tc:null,co:"RAPPI SAC",cat:"Delivery/Restaurantes"},
+{f:"2026-06-06",h:"09:16 PM",b:"BCP",t:"Consumo",m:38.36,c:"PEN",mp:38.36,tc:null,co:"RAPPI SAC",cat:"Delivery"},
+{f:"2026-06-07",h:"03:49 PM",b:"BCP",t:"Consumo",m:72.52,c:"PEN",mp:72.52,tc:null,co:"RAPPI SAC",cat:"Delivery"},
+{f:"2026-06-08",h:"07:44 PM",b:"BCP",t:"Consumo",m:19.98,c:"PEN",mp:19.98,tc:null,co:"RAPPI SAC",cat:"Delivery"},
+{f:"2026-06-09",h:"04:35 PM",b:"BCP",t:"Consumo",m:18.18,c:"PEN",mp:18.18,tc:null,co:"RAPPI SAC",cat:"Delivery"},
 {f:"2026-06-09",h:"04:37 PM",b:"BCP",t:"Yape",m:15.00,c:"PEN",mp:15.00,tc:null,co:"Yape a John S Cordova Q.",cat:"Transferencias"},
-{f:"2026-06-10",h:"07:22 PM",b:"BCP",t:"Consumo",m:69.22,c:"PEN",mp:69.22,tc:null,co:"RAPPI SAC",cat:"Delivery/Restaurantes"},
+{f:"2026-06-10",h:"07:22 PM",b:"BCP",t:"Consumo",m:69.22,c:"PEN",mp:69.22,tc:null,co:"RAPPI SAC",cat:"Delivery"},
 {f:"2026-06-11",h:"11:30 AM",b:"BCP",t:"Yape",m:120.00,c:"PEN",mp:120.00,tc:null,co:"Yape a Ariel Gustavo Vega X.",cat:"Transferencias"},
-{f:"2026-06-11",h:"07:55 PM",b:"BCP",t:"Consumo",m:26.70,c:"PEN",mp:26.70,tc:null,co:"RAPPI SAC",cat:"Delivery/Restaurantes"},
-{f:"2026-06-12",h:"04:35 PM",b:"BCP",t:"Consumo",m:14.61,c:"PEN",mp:14.61,tc:null,co:"RAPPI SAC",cat:"Delivery/Restaurantes"},
-{f:"2026-06-12",h:"09:25 PM",b:"BCP",t:"Consumo",m:23.52,c:"PEN",mp:23.52,tc:null,co:"RAPPI SAC",cat:"Delivery/Restaurantes"},
-{f:"2026-06-13",h:"03:08 PM",b:"BCP",t:"Consumo",m:14.50,c:"PEN",mp:14.50,tc:null,co:"IZI*Q CHURROS",cat:"Delivery/Restaurantes"},
+{f:"2026-06-11",h:"07:55 PM",b:"BCP",t:"Consumo",m:26.70,c:"PEN",mp:26.70,tc:null,co:"RAPPI SAC",cat:"Delivery"},
+{f:"2026-06-12",h:"04:35 PM",b:"BCP",t:"Consumo",m:14.61,c:"PEN",mp:14.61,tc:null,co:"RAPPI SAC",cat:"Delivery"},
+{f:"2026-06-12",h:"09:25 PM",b:"BCP",t:"Consumo",m:23.52,c:"PEN",mp:23.52,tc:null,co:"RAPPI SAC",cat:"Delivery"},
+{f:"2026-06-13",h:"03:08 PM",b:"BCP",t:"Consumo",m:14.50,c:"PEN",mp:14.50,tc:null,co:"IZI*Q CHURROS",cat:"Restaurantes"},
 {f:"2026-06-13",h:"04:56 PM",b:"BCP",t:"Consumo",m:60.00,c:"PEN",mp:60.00,tc:null,co:"OVALO MONITOR",cat:"Otros"},
-{f:"2026-06-14",h:"09:46 AM",b:"BCP",t:"Consumo",m:30.83,c:"PEN",mp:30.83,tc:null,co:"RAPPI SAC",cat:"Delivery/Restaurantes"},
-{f:"2026-06-14",h:"02:28 PM",b:"BCP",t:"Consumo",m:46.01,c:"PEN",mp:46.01,tc:null,co:"RAPPI SAC",cat:"Delivery/Restaurantes"},
+{f:"2026-06-14",h:"09:46 AM",b:"BCP",t:"Consumo",m:30.83,c:"PEN",mp:30.83,tc:null,co:"RAPPI SAC",cat:"Delivery"},
+{f:"2026-06-14",h:"02:28 PM",b:"BCP",t:"Consumo",m:46.01,c:"PEN",mp:46.01,tc:null,co:"RAPPI SAC",cat:"Delivery"},
 {f:"2026-06-14",h:"07:37 PM",b:"BCP",t:"Yape",m:90.00,c:"PEN",mp:90.00,tc:null,co:"Yape a Claudia K Chuquillanqui M.",cat:"Transferencias"},
 {f:"2026-06-16",h:"01:05 PM",b:"BCP",t:"Yape",m:10.00,c:"PEN",mp:10.00,tc:null,co:"Yape a Facundo O Pretel P.",cat:"Transferencias"},
-{f:"2026-06-16",h:"07:38 PM",b:"BCP",t:"Consumo",m:32.02,c:"PEN",mp:32.02,tc:null,co:"RAPPI SAC",cat:"Delivery/Restaurantes"},
+{f:"2026-06-16",h:"07:38 PM",b:"BCP",t:"Consumo",m:32.02,c:"PEN",mp:32.02,tc:null,co:"RAPPI SAC",cat:"Delivery"},
 {f:"2026-06-18",h:"09:50 AM",b:"BCP",t:"Yape",m:100.00,c:"PEN",mp:100.00,tc:null,co:"Yape a Patricia K Mayta T.",cat:"Transferencias"},
-{f:"2026-06-18",h:"07:14 PM",b:"BCP",t:"Consumo",m:52.01,c:"PEN",mp:52.01,tc:null,co:"RAPPI SAC",cat:"Delivery/Restaurantes"},
-{f:"2026-06-18",h:"08:24 PM",b:"BCP",t:"Consumo",m:36.12,c:"PEN",mp:36.12,tc:null,co:"RAPPI SAC",cat:"Delivery/Restaurantes"},
-{f:"2026-06-18",h:"09:39 PM",b:"BCP",t:"Consumo",m:20.47,c:"PEN",mp:20.47,tc:null,co:"RAPPI SAC",cat:"Delivery/Restaurantes"},
+{f:"2026-06-18",h:"07:14 PM",b:"BCP",t:"Consumo",m:52.01,c:"PEN",mp:52.01,tc:null,co:"RAPPI SAC",cat:"Delivery"},
+{f:"2026-06-18",h:"08:24 PM",b:"BCP",t:"Consumo",m:36.12,c:"PEN",mp:36.12,tc:null,co:"RAPPI SAC",cat:"Delivery"},
+{f:"2026-06-18",h:"09:39 PM",b:"BCP",t:"Consumo",m:20.47,c:"PEN",mp:20.47,tc:null,co:"RAPPI SAC",cat:"Delivery"},
 {f:"2026-06-18",h:"10:10 PM",b:"BCP",t:"Consumo",m:27.90,c:"PEN",mp:27.90,tc:null,co:"DLC*RAPPI PRO PERU",cat:"Entretenimiento"},
 {f:"2026-06-19",h:"02:42 PM",b:"BCP",t:"Pago de servicio",m:4940.00,c:"PEN",mp:4940.00,tc:null,co:"Grupo Computer Shop EIRL",cat:"Compras/Retail"},
-{f:"2026-06-19",h:"09:18 PM",b:"BCP",t:"Consumo",m:31.41,c:"PEN",mp:31.41,tc:null,co:"RAPPI SAC",cat:"Delivery/Restaurantes"},
+{f:"2026-06-19",h:"09:18 PM",b:"BCP",t:"Consumo",m:31.41,c:"PEN",mp:31.41,tc:null,co:"RAPPI SAC",cat:"Delivery"},
 {f:"2026-06-20",h:"10:01 AM",b:"BCP",t:"Consumo",m:69.40,c:"PEN",mp:69.40,tc:null,co:"MFAG55 ALCANFORES",cat:"Otros"},
 {f:"2026-06-20",h:"10:16 AM",b:"BCP",t:"Consumo",m:6.80,c:"PEN",mp:6.80,tc:null,co:"IKF O18 LARCO 3",cat:"Salud"},
 {f:"2026-06-20",h:"10:22 AM",b:"BCP",t:"Consumo",m:49.90,c:"PEN",mp:49.90,tc:null,co:"COOLBOX B55",cat:"Otros"},
-{f:"2026-06-20",h:"10:40 AM",b:"BCP",t:"Consumo",m:28.30,c:"PEN",mp:28.30,tc:null,co:"IZI*BODEGA CAFE CHUPIMO",cat:"Delivery/Restaurantes"},
-{f:"2026-06-20",h:"02:34 PM",b:"BCP",t:"Consumo",m:67.32,c:"PEN",mp:67.32,tc:null,co:"RAPPI SAC",cat:"Delivery/Restaurantes"},
+{f:"2026-06-20",h:"10:40 AM",b:"BCP",t:"Consumo",m:28.30,c:"PEN",mp:28.30,tc:null,co:"IZI*BODEGA CAFE CHUPIMO",cat:"Restaurantes"},
+{f:"2026-06-20",h:"02:34 PM",b:"BCP",t:"Consumo",m:67.32,c:"PEN",mp:67.32,tc:null,co:"RAPPI SAC",cat:"Delivery"},
 {f:"2026-06-20",h:"04:36 PM",b:"BCP",t:"Yape",m:90.00,c:"PEN",mp:90.00,tc:null,co:"Yape a Claudia K Chuquillanqui M.",cat:"Transferencias"},
-{f:"2026-06-21",h:"01:44 AM",b:"BCP",t:"Consumo",m:235.44,c:"PEN",mp:235.44,tc:null,co:"GO PET SOL VTEX",cat:"Compras/Retail"},
+{f:"2026-06-21",h:"01:44 AM",b:"BCP",t:"Consumo",m:235.44,c:"PEN",mp:235.44,tc:null,co:"GO PET SOL VTEX",cat:"Gatos"},
 {f:"2026-06-21",h:"12:06 PM",b:"BCP",t:"Yape",m:50.00,c:"PEN",mp:50.00,tc:null,co:"Yape a Jaime A Chavez N.",cat:"Transferencias"},
 {f:"2026-06-21",h:"06:18 PM",b:"BCP",t:"Consumo",m:59.62,c:"USD",mp:201.99,tc:3.388,co:"Holafly",cat:"Servicios"},
 {f:"2026-06-22",h:"01:39 PM",b:"BCP",t:"Consumo",m:50.00,c:"PEN",mp:50.00,tc:null,co:"ENCANTOS MIRAFLORES",cat:"Otros"},
 {f:"2026-06-22",h:"04:54 PM",b:"BCP",t:"Consumo",m:11.70,c:"PEN",mp:11.70,tc:null,co:"SUC 36 MAESTRO SURQUILL",cat:"Compras/Retail"},
-{f:"2026-06-22",h:"06:29 PM",b:"BCP",t:"Consumo",m:85.39,c:"PEN",mp:85.39,tc:null,co:"WONG LARCOMAR",cat:"Comida/Supermercado"},
-{f:"2026-06-22",h:"06:39 PM",b:"BCP",t:"Consumo",m:4.90,c:"PEN",mp:4.90,tc:null,co:"WONG LARCOMAR",cat:"Comida/Supermercado"},
+{f:"2026-06-22",h:"06:29 PM",b:"BCP",t:"Consumo",m:85.39,c:"PEN",mp:85.39,tc:null,co:"WONG LARCOMAR",cat:"Casa"},
+{f:"2026-06-22",h:"06:39 PM",b:"BCP",t:"Consumo",m:4.90,c:"PEN",mp:4.90,tc:null,co:"WONG LARCOMAR",cat:"Casa"},
 {f:"2026-06-22",h:"06:52 PM",b:"BCP",t:"Consumo",m:111.90,c:"PEN",mp:111.90,tc:null,co:"MFAG46 ARMENDARIZ",cat:"Otros"},
-{f:"2026-06-27",h:"06:00 PM",b:"BCP",t:"Consumo",m:32.22,c:"PEN",mp:32.22,tc:null,co:"RAPPI SAC",cat:"Delivery/Restaurantes"},
-{f:"2026-06-27",h:"06:37 PM",b:"BCP",t:"Consumo",m:51.21,c:"PEN",mp:51.21,tc:null,co:"RAPPI SAC",cat:"Delivery/Restaurantes"},
-{f:"2026-06-29",h:"11:02 AM",b:"BCP",t:"Consumo",m:35.31,c:"PEN",mp:35.31,tc:null,co:"RAPPI SAC",cat:"Delivery/Restaurantes"},
-{f:"2026-06-29",h:"12:49 PM",b:"BCP",t:"Consumo",m:31.41,c:"PEN",mp:31.41,tc:null,co:"RAPPI SAC",cat:"Delivery/Restaurantes"},
-{f:"2026-06-29",h:"07:14 PM",b:"BCP",t:"Consumo",m:66.31,c:"PEN",mp:66.31,tc:null,co:"RAPPI SAC",cat:"Delivery/Restaurantes"},
+{f:"2026-06-27",h:"06:00 PM",b:"BCP",t:"Consumo",m:32.22,c:"PEN",mp:32.22,tc:null,co:"RAPPI SAC",cat:"Delivery"},
+{f:"2026-06-27",h:"06:37 PM",b:"BCP",t:"Consumo",m:51.21,c:"PEN",mp:51.21,tc:null,co:"RAPPI SAC",cat:"Delivery"},
+{f:"2026-06-29",h:"11:02 AM",b:"BCP",t:"Consumo",m:35.31,c:"PEN",mp:35.31,tc:null,co:"RAPPI SAC",cat:"Delivery"},
+{f:"2026-06-29",h:"12:49 PM",b:"BCP",t:"Consumo",m:31.41,c:"PEN",mp:31.41,tc:null,co:"RAPPI SAC",cat:"Delivery"},
+{f:"2026-06-29",h:"07:14 PM",b:"BCP",t:"Consumo",m:66.31,c:"PEN",mp:66.31,tc:null,co:"RAPPI SAC",cat:"Delivery"},
 {f:"2026-06-30",h:"09:12 AM",b:"BCP",t:"Yape",m:10.00,c:"PEN",mp:10.00,tc:null,co:"Yape a Adriana Cecilia Ibarra E.",cat:"Transferencias"},
 {f:"2026-06-30",h:"10:29 AM",b:"BCP",t:"Yape",m:22.40,c:"PEN",mp:22.40,tc:null,co:"Yape a Manuel Jesus Cespedes D.",cat:"Transferencias"},
-{f:"2026-06-30",h:"01:31 PM",b:"BCP",t:"Consumo",m:263.00,c:"PEN",mp:263.00,tc:null,co:"IZI*PUNTA MADERO INVERS",cat:"Delivery/Restaurantes"},
-{f:"2026-06-30",h:"09:07 PM",b:"BCP",t:"Consumo",m:5.90,c:"PEN",mp:5.90,tc:null,co:"RAPPI SAC",cat:"Delivery/Restaurantes"},
-{f:"2026-07-01",h:"10:32 PM",b:"BCP",t:"Consumo",m:60.00,c:"PEN",mp:60.00,tc:null,co:"RESTAURANTE CIRCO",cat:"Delivery/Restaurantes"},
-{f:"2026-07-01",h:"10:39 PM",b:"BCP",t:"Consumo",m:79.90,c:"PEN",mp:79.90,tc:null,co:"MFAG46 ARMENDARIZ",cat:"Delivery/Restaurantes"},
+{f:"2026-06-30",h:"01:31 PM",b:"BCP",t:"Consumo",m:263.00,c:"PEN",mp:263.00,tc:null,co:"IZI*PUNTA MADERO INVERS",cat:"Restaurantes"},
+{f:"2026-06-30",h:"09:07 PM",b:"BCP",t:"Consumo",m:5.90,c:"PEN",mp:5.90,tc:null,co:"RAPPI SAC",cat:"Delivery"},
+{f:"2026-07-01",h:"10:32 PM",b:"BCP",t:"Consumo",m:60.00,c:"PEN",mp:60.00,tc:null,co:"RESTAURANTE CIRCO",cat:"Restaurantes"},
+{f:"2026-07-01",h:"10:39 PM",b:"BCP",t:"Consumo",m:79.90,c:"PEN",mp:79.90,tc:null,co:"MFAG46 ARMENDARIZ",cat:"Restaurantes"},
 {f:"2026-07-02",h:"09:27 AM",b:"BCP",t:"Consumo",m:27.50,c:"PEN",mp:27.50,tc:null,co:"SB139 - LAP SALIDAS INTER",cat:"Otros"},
 {f:"2026-07-02",h:"04:49 PM",b:"BCP",t:"Consumo",m:9.97,c:"PEN",mp:9.97,tc:null,co:"RUMBO 450 T1",cat:"Compras/Retail"},
 {f:"2026-07-02",h:"07:25 PM",b:"BCP",t:"Consumo",m:3.34,c:"PEN",mp:3.34,tc:null,co:"HAULMER*DGUSTTY",cat:"Otros"},
-{f:"2026-07-05",h:"03:31 PM",b:"BCP",t:"Consumo",m:28.42,c:"PEN",mp:28.42,tc:null,co:"RAPPI SAC",cat:"Delivery/Restaurantes"},
+{f:"2026-07-05",h:"03:31 PM",b:"BCP",t:"Consumo",m:28.42,c:"PEN",mp:28.42,tc:null,co:"RAPPI SAC",cat:"Delivery"},
 {f:"2026-07-05",h:"10:10 PM",b:"BCP",t:"Yape",m:90.00,c:"PEN",mp:90.00,tc:null,co:"Yape a Claudia K Chuquillanqui M.",cat:"Transferencias"},
-{f:"2026-07-06",h:"10:03 AM",b:"Interbank",t:"Consumo",m:9.90,c:"PEN",mp:9.90,tc:null,co:"Uber",cat:"Transporte"},
+{f:"2026-07-06",h:"10:03 AM",b:"Interbank",t:"Consumo",m:9.90,c:"PEN",mp:9.90,tc:null,co:"Uber",cat:"Taxis"},
 {f:"2026-07-06",h:"10:36 AM",b:"BCP",t:"Consumo",m:177.00,c:"PEN",mp:177.00,tc:null,co:"PENARANDA PLANCHADO DOL",cat:"Servicios"},
-{f:"2026-07-06",h:"07:38 PM",b:"BCP",t:"Consumo",m:16.10,c:"PEN",mp:16.10,tc:null,co:"RAPPI SAC",cat:"Delivery/Restaurantes"},
+{f:"2026-07-06",h:"07:38 PM",b:"BCP",t:"Consumo",m:16.10,c:"PEN",mp:16.10,tc:null,co:"RAPPI SAC",cat:"Delivery"},
 {f:"2026-07-07",h:"01:00 PM",b:"BCP",t:"Yape",m:10.00,c:"PEN",mp:10.00,tc:null,co:"Yape a Facundo O Pretel P.",cat:"Transferencias"},
-{f:"2026-07-08",h:"06:55 PM",b:"BCP",t:"Consumo",m:226.17,c:"PEN",mp:226.17,tc:null,co:"E S ROMA",cat:"Otros"},
-{f:"2026-07-08",h:"08:45 PM",b:"BCP",t:"Consumo",m:53.22,c:"PEN",mp:53.22,tc:null,co:"RAPPI SAC",cat:"Delivery/Restaurantes"},
-{f:"2026-07-09",h:"05:48 PM",b:"BCP",t:"Consumo",m:32.10,c:"PEN",mp:32.10,tc:null,co:"MFAG55 ALCANFORES",cat:"Delivery/Restaurantes"},
-{f:"2026-07-10",h:"08:58 PM",b:"BCP",t:"Consumo",m:14.88,c:"PEN",mp:14.88,tc:null,co:"ARMENDARIZ C1",cat:"Delivery/Restaurantes"},
-{f:"2026-07-10",h:"09:05 PM",b:"BCP",t:"Consumo",m:52.71,c:"PEN",mp:52.71,tc:null,co:"RAPPI SAC",cat:"Delivery/Restaurantes"},
+{f:"2026-07-08",h:"06:55 PM",b:"BCP",t:"Consumo",m:226.17,c:"PEN",mp:226.17,tc:null,co:"E S ROMA",cat:"Carro"},
+{f:"2026-07-08",h:"08:45 PM",b:"BCP",t:"Consumo",m:53.22,c:"PEN",mp:53.22,tc:null,co:"RAPPI SAC",cat:"Delivery"},
+{f:"2026-07-09",h:"05:48 PM",b:"BCP",t:"Consumo",m:32.10,c:"PEN",mp:32.10,tc:null,co:"MFAG55 ALCANFORES",cat:"Restaurantes"},
+{f:"2026-07-10",h:"08:58 PM",b:"BCP",t:"Consumo",m:14.88,c:"PEN",mp:14.88,tc:null,co:"ARMENDARIZ C1",cat:"Restaurantes"},
+{f:"2026-07-10",h:"09:05 PM",b:"BCP",t:"Consumo",m:52.71,c:"PEN",mp:52.71,tc:null,co:"RAPPI SAC",cat:"Delivery"},
 {f:"2026-07-11",h:"12:08 AM",b:"BCP",t:"Consumo",m:23.60,c:"PEN",mp:23.60,tc:null,co:"ANTHROPIC* CLAUDE SUB",cat:"Entretenimiento"},
 {f:"2026-07-11",h:"10:01 AM",b:"BCP",t:"Consumo",m:103.90,c:"PEN",mp:103.90,tc:null,co:"RIPLEY COM",cat:"Compras/Retail"},
 {f:"2026-07-11",h:"11:56 AM",b:"BCP",t:"Yape",m:14.30,c:"PEN",mp:14.30,tc:null,co:"Yape a Nicolas Carrasco H.",cat:"Transferencias"},
-{f:"2026-07-11",h:"12:50 PM",b:"BCP",t:"Consumo",m:3.50,c:"PEN",mp:3.50,tc:null,co:"E S EL AVION",cat:"Delivery/Restaurantes"},
-{f:"2026-07-11",h:"02:10 PM",b:"BCP",t:"Consumo",m:22.00,c:"PEN",mp:22.00,tc:null,co:"DULIMA 3327",cat:"Comida/Supermercado"},
-{f:"2026-07-11",h:"02:16 PM",b:"BCP",t:"Consumo",m:5.80,c:"PEN",mp:5.80,tc:null,co:"E S EL AVION",cat:"Delivery/Restaurantes"},
+{f:"2026-07-11",h:"12:50 PM",b:"BCP",t:"Consumo",m:3.50,c:"PEN",mp:3.50,tc:null,co:"E S EL AVION",cat:"Carro"},
+{f:"2026-07-11",h:"02:10 PM",b:"BCP",t:"Consumo",m:22.00,c:"PEN",mp:22.00,tc:null,co:"DULIMA 3327",cat:"Casa"},
+{f:"2026-07-11",h:"02:16 PM",b:"BCP",t:"Consumo",m:5.80,c:"PEN",mp:5.80,tc:null,co:"E S EL AVION",cat:"Carro"},
 {f:"2026-07-11",h:"04:01 PM",b:"BCP",t:"Consumo",m:82.50,c:"PEN",mp:82.50,tc:null,co:"KION",cat:"Compras/Retail"},
-{f:"2026-07-11",h:"07:59 PM",b:"BCP",t:"Consumo",m:125.98,c:"PEN",mp:125.98,tc:null,co:"Plaza Vea",cat:"Comida/Supermercado"},
-{f:"2026-07-11",h:"09:39 PM",b:"BCP",t:"Consumo",m:31.76,c:"PEN",mp:31.76,tc:null,co:"RAPPI SAC",cat:"Delivery/Restaurantes"},
-{f:"2026-07-12",h:"10:43 AM",b:"BCP",t:"Consumo",m:53.00,c:"PEN",mp:53.00,tc:null,co:"SB129 - AV. LARCO",cat:"Delivery/Restaurantes"},
-{f:"2026-07-12",h:"11:55 AM",b:"BCP",t:"Consumo",m:249.80,c:"PEN",mp:249.80,tc:null,co:"HYM LARCOMAR",cat:"Compras/Retail"},
+{f:"2026-07-11",h:"07:59 PM",b:"BCP",t:"Consumo",m:125.98,c:"PEN",mp:125.98,tc:null,co:"Plaza Vea",cat:"Casa"},
+{f:"2026-07-11",h:"09:39 PM",b:"BCP",t:"Consumo",m:31.76,c:"PEN",mp:31.76,tc:null,co:"RAPPI SAC",cat:"Delivery"},
+{f:"2026-07-12",h:"10:43 AM",b:"BCP",t:"Consumo",m:53.00,c:"PEN",mp:53.00,tc:null,co:"SB129 - AV. LARCO",cat:"Restaurantes"},
+{f:"2026-07-12",h:"11:55 AM",b:"BCP",t:"Consumo",m:249.80,c:"PEN",mp:249.80,tc:null,co:"HYM LARCOMAR",cat:"Vestimenta"},
 {f:"2026-07-12",h:"01:48 PM",b:"BCP",t:"Consumo",m:54.00,c:"PEN",mp:54.00,tc:null,co:"LARCOMAR",cat:"Otros"},
-{f:"2026-07-12",h:"01:57 PM",b:"BCP",t:"Consumo",m:118.93,c:"PEN",mp:118.93,tc:null,co:"CALVIN KLEIN LARCOMAR",cat:"Compras/Retail"},
+{f:"2026-07-12",h:"01:57 PM",b:"BCP",t:"Consumo",m:118.93,c:"PEN",mp:118.93,tc:null,co:"CALVIN KLEIN LARCOMAR",cat:"Vestimenta"},
 {f:"2026-07-12",h:"06:34 PM",b:"BCP",t:"Yape",m:90.00,c:"PEN",mp:90.00,tc:null,co:"Yape a Claudia K Chuquillanqui M.",cat:"Transferencias"},
-{f:"2026-07-12",h:"07:04 PM",b:"BCP",t:"Consumo",m:941.88,c:"USD",mp:3208.04,tc:3.406,co:"COPA",cat:"Transporte"},
-{f:"2026-07-12",h:"07:27 PM",b:"BCP",t:"Consumo",m:32.83,c:"PEN",mp:32.83,tc:null,co:"RAPPI SAC",cat:"Delivery/Restaurantes"},
+{f:"2026-07-12",h:"07:04 PM",b:"BCP",t:"Consumo",m:941.88,c:"USD",mp:3208.04,tc:3.406,co:"COPA",cat:"Viajes"},
+{f:"2026-07-12",h:"07:27 PM",b:"BCP",t:"Consumo",m:32.83,c:"PEN",mp:32.83,tc:null,co:"RAPPI SAC",cat:"Delivery"},
 {f:"2026-07-13",h:"06:25 PM",b:"BCP",t:"Consumo",m:324.54,c:"PEN",mp:324.54,tc:null,co:"Smart Fit Peru",cat:"Salud"},
-{f:"2026-07-13",h:"08:15 PM",b:"BCP",t:"Consumo",m:31.41,c:"PEN",mp:31.41,tc:null,co:"RAPPI SAC",cat:"Delivery/Restaurantes"},
+{f:"2026-07-13",h:"08:15 PM",b:"BCP",t:"Consumo",m:31.41,c:"PEN",mp:31.41,tc:null,co:"RAPPI SAC",cat:"Delivery"},
 {f:"2026-07-13",h:"10:09 PM",b:"BCP",t:"Consumo",m:2999.00,c:"PEN",mp:2999.00,tc:null,co:"JUNTOZ COM MSI BCP",cat:"Compras/Retail"},
 {f:"2026-07-14",h:"06:43 PM",b:"BCP",t:"Consumo",m:50.00,c:"PEN",mp:50.00,tc:null,co:"ENCANTOS MIRAFLORES",cat:"Otros"},
-{f:"2026-07-14",h:"08:28 PM",b:"BCP",t:"Consumo",m:98.80,c:"PEN",mp:98.80,tc:null,co:"RESTAURANTE CIRCO",cat:"Delivery/Restaurantes"},
-{f:"2026-07-15",h:"08:44 PM",b:"BCP",t:"Consumo",m:30.07,c:"PEN",mp:30.07,tc:null,co:"RAPPI SAC",cat:"Delivery/Restaurantes"},
-{f:"2026-07-16",h:"08:59 PM",b:"BCP",t:"Consumo",m:14.18,c:"PEN",mp:14.18,tc:null,co:"RAPPI SAC",cat:"Delivery/Restaurantes"},
+{f:"2026-07-14",h:"08:28 PM",b:"BCP",t:"Consumo",m:98.80,c:"PEN",mp:98.80,tc:null,co:"RESTAURANTE CIRCO",cat:"Restaurantes"},
+{f:"2026-07-15",h:"08:44 PM",b:"BCP",t:"Consumo",m:30.07,c:"PEN",mp:30.07,tc:null,co:"RAPPI SAC",cat:"Delivery"},
+{f:"2026-07-16",h:"08:59 PM",b:"BCP",t:"Consumo",m:14.18,c:"PEN",mp:14.18,tc:null,co:"RAPPI SAC",cat:"Delivery"},
 {f:"2026-07-17",h:"06:31 PM",b:"BCP",t:"Yape",m:90.00,c:"PEN",mp:90.00,tc:null,co:"Yape a Claudia K Chuquillanqui M.",cat:"Transferencias"},
-{f:"2026-07-18",h:"12:29 PM",b:"BCP",t:"Consumo",m:66.31,c:"PEN",mp:66.31,tc:null,co:"RAPPI SAC",cat:"Delivery/Restaurantes"},
-{f:"2026-07-18",h:"07:42 PM",b:"BCP",t:"Consumo",m:39.31,c:"PEN",mp:39.31,tc:null,co:"RAPPI SAC",cat:"Delivery/Restaurantes"},
+{f:"2026-07-18",h:"12:29 PM",b:"BCP",t:"Consumo",m:66.31,c:"PEN",mp:66.31,tc:null,co:"RAPPI SAC",cat:"Delivery"},
+{f:"2026-07-18",h:"07:42 PM",b:"BCP",t:"Consumo",m:39.31,c:"PEN",mp:39.31,tc:null,co:"RAPPI SAC",cat:"Delivery"},
 ];
 
 const CAT_COLOR = {
   "Vivienda": "var(--cat-vivienda)",
-  "Comida/Supermercado": "var(--cat-comida)",
-  "Delivery/Restaurantes": "var(--cat-delivery)",
-  "Transporte": "var(--cat-transporte)",
+  "Casa": "var(--cat-casa)",
+  "Delivery": "var(--cat-delivery)",
+  "Restaurantes": "var(--cat-restaurantes)",
+  "Taxis": "var(--cat-taxis)",
+  "Viajes": "var(--cat-viajes)",
   "Servicios": "var(--cat-servicios)",
   "Entretenimiento": "var(--cat-entret)",
   "Salud": "var(--cat-salud)",
   "Compras/Retail": "var(--cat-compras)",
+  "Vestimenta": "var(--cat-vestimenta)",
+  "Gatos": "var(--cat-gatos)",
+  "Carro": "var(--cat-carro)",
+  "Trading": "var(--cat-trading)",
   "Transferencias": "var(--cat-transf)",
   "Otros": "var(--cat-otros)"
 };
@@ -351,6 +375,7 @@ const INGRESOS_KEY = "finanzasEnzoIngresos_v1";
 
 let TX = [];
 let activeTab = "consolidado";
+let categoryFilter = "todas";
 let lastRefreshOk = null;
 let lastRefreshTime = null;
 
@@ -486,12 +511,12 @@ function donutSVG(byCat, totalPEN, centerLabel, centerSub) {
   return segmentedDonutSVG(entries, totalPEN, 300, 36, centerLabel, centerSub);
 }
 
-const INCOME_PALETTE = ["var(--cat-comida)","var(--cat-delivery)","var(--cat-transporte)","var(--cat-servicios)","var(--cat-entret)","var(--cat-salud)","var(--cat-compras)","var(--cat-transf)","var(--cat-vivienda)","var(--cat-otros)"];
+const INCOME_PALETTE = ["var(--cat-casa)","var(--cat-delivery)","var(--cat-taxis)","var(--cat-servicios)","var(--cat-entret)","var(--cat-salud)","var(--cat-compras)","var(--cat-transf)","var(--cat-vivienda)","var(--cat-trading)","var(--cat-restaurantes)","var(--cat-viajes)","var(--cat-vestimenta)","var(--cat-gatos)","var(--cat-carro)","var(--cat-otros)"];
 
 function incomeDonutSVG(bySource, total, centerLabel, centerSub) {
   const keys = Object.keys(bySource).sort((a,b)=>bySource[b]-bySource[a]);
   const entries = keys.map((k,i) => [k, bySource[k], INCOME_PALETTE[i % INCOME_PALETTE.length]]);
-  return segmentedDonutSVG(entries, total, 150, 22, centerLabel, centerSub);
+  return segmentedDonutSVG(entries, total, 300, 36, centerLabel, centerSub);
 }
 
 function incomeLegend(bySource, total) {
@@ -540,7 +565,13 @@ function ingresosCard(scopeMonthKeys, formMonthKey) {
     </div>`).join("") : "";
   const formHtml = formMonthKey ? `
     <form class="ing-form" id="ingForm" data-month="${formMonthKey}">
-      <input type="text" id="ingDesc" placeholder="Fuente (ej. Sueldo)" required>
+      <select id="ingDesc" required>
+        <option value="" disabled selected>Fuente...</option>
+        <option value="Salario">Salario</option>
+        <option value="Patty">Patty</option>
+        <option value="Trading">Trading</option>
+        <option value="Otros">Otros</option>
+      </select>
       <input type="number" id="ingAmt" placeholder="Monto" step="0.01" min="0" required>
       <select id="ingCur">
         <option value="PEN">S/</option>
@@ -582,10 +613,19 @@ function txTable(rows) {
   </table></div>`;
 }
 
+function catFilterSelect(byCat) {
+  const catOptions = CAT_ORDER.filter(c => byCat[c] > 0);
+  return `<select id="catFilter" class="cat-filter">
+    <option value="todas"${categoryFilter==='todas' ? ' selected' : ''}>Todas las categorías</option>
+    ${catOptions.map(c => `<option value="${c}"${categoryFilter===c ? ' selected' : ''}>${c}</option>`).join("")}
+  </select>`;
+}
+
 function renderMonthOrConsolidated(rows, subLabel, scopeMonthKeys, formMonthKey, prevTotals) {
   const s = computeStats(rows);
   const topCatName = s.topCat ? s.topCat[0] : "—";
   const ingresosTotal = ingresosForScope(scopeMonthKeys).reduce((sum,x) => sum + Number(x.montoPEN), 0);
+  const filteredRows = categoryFilter === "todas" ? rows : rows.filter(r => r.cat === categoryFilter);
   return `
     <div class="stat-row">
       <div class="stat"><div class="k">Ingresos</div><div class="v good">S/ ${fmtMoney(ingresosTotal)}</div></div>
@@ -604,8 +644,14 @@ function renderMonthOrConsolidated(rows, subLabel, scopeMonthKeys, formMonthKey,
       ${!prevTotals ? `<p style="font-size:11px;color:var(--muted);margin:10px 0 0;">La comparación con el mes anterior aparece dentro de cada pestaña de mes (no en Consolidado, ni en el primer mes con datos).</p>` : ""}
     </div>
     <section>
-      <div class="section-head"><h2>Todos los movimientos${subLabel ? " — "+subLabel : ""}</h2><span class="tag">${s.count} filas</span></div>
-      ${txTable(rows)}
+      <div class="section-head">
+        <h2>Todos los movimientos${subLabel ? " — "+subLabel : ""}</h2>
+        <div style="display:flex; align-items:center; gap:10px;">
+          ${catFilterSelect(s.byCat)}
+          <span class="tag">${filteredRows.length} filas</span>
+        </div>
+      </div>
+      ${txTable(filteredRows)}
     </section>
   `;
 }
@@ -626,7 +672,7 @@ function render() {
   }
   tabsEl.innerHTML = tabsHtml;
   tabsEl.querySelectorAll(".tab-btn").forEach(btn => {
-    btn.addEventListener("click", () => { activeTab = btn.dataset.tab; render(); });
+    btn.addEventListener("click", () => { activeTab = btn.dataset.tab; categoryFilter = "todas"; render(); });
   });
 
   // views
@@ -637,6 +683,12 @@ function render() {
     const pmk = prevMonthKey(activeTab);
     const prevTotals = monthKeys.includes(pmk) ? categoryTotalsForMonth(pmk) : null;
     viewsEl.innerHTML = renderMonthOrConsolidated(months[activeTab] || [], monthLabel(activeTab), [activeTab], activeTab, prevTotals);
+  }
+
+  // filtro de categoría en la tabla de movimientos
+  const catFilterEl = document.getElementById("catFilter");
+  if (catFilterEl) {
+    catFilterEl.addEventListener("change", () => { categoryFilter = catFilterEl.value; render(); });
   }
 
   // ingresos: form + botones de borrar
